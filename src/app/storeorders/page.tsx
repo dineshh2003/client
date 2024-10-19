@@ -37,7 +37,7 @@ const Page: React.FC = () => {
           <TrackBar/>
           <ModifyBar/>
           <CheckboxRowSelectionDemo/>
-          <ProgressBar/>
+          {/* <ProgressBar/> */}
         </Box>
       </Box>
     </Box>

@@ -13,6 +13,10 @@ const IndexBar = () => {
         width: `calc(100% - 300px)`, 
         ml: `300px`,
         bgcolor: '#121212',
+        display : 'flex',
+        justifyContent : 'right',
+        fontFamily : 'sans-serif'
+
       }}
       elevation={0}
     >
@@ -24,8 +28,9 @@ const IndexBar = () => {
               backgroundColor: '#121212',
               color: '#fff', 
               height: '37px',
-              fontSize: '1rem',
+              fontSize: '0.9rem',
               textTransform: 'none',
+               fontFamily : 'sans-serif',
               borderRadius: '10px', // Rounded corners
               padding: '0.5rem 1.5rem',
               '&:hover': { backgroundColor: '#38B583' }
