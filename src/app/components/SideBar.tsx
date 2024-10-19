@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -14,15 +14,44 @@ import ListItemText from '@mui/material/ListItemText';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { AssignmentReturnIcon, HomeIcon, LocalShippingIcon, MailIcon, StoreIcon } from '../utils/Icons';
 
 const drawerWidth = 300;
 
 export default function PermanentDrawerLeft() {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const router = useRouter(); // Initialize the router
 
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index);
+    
+    // Navigate based on the selected index
+    switch(index) {
+      case 0: // Home
+        router.push('/'); // Adjust the path as needed
+        break;
+      case 1: // Inbox
+        router.push('/inbox'); // Adjust the path as needed
+        break;
+      case 2: // Store Order
+        router.push('/storeorder'); // Adjust the path as needed
+        break;
+      case 3: // Delivered
+        router.push('/delivered'); // Adjust the path as needed
+        break;
+      case 4: // Reverse Order
+        router.push('/reverseorder'); // Adjust the path as needed
+        break;
+      case 5: // Store Integration
+        router.push('/storeIntegration'); // Navigate to Store Integration
+        break;
+      case 6: // Billing
+        router.push('/billing'); // Adjust the path as needed
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -37,11 +66,6 @@ export default function PermanentDrawerLeft() {
             boxSizing: 'border-box',
             backgroundColor: '#121212', // Dark background color
             color: '#50C878', // Greenish text color
-                    //   border: '1px solid #42C195', // Add a border at the bottom
-        //   borderBottomLeftRadius: '16px', // Adjust the radius as needed
-        //   borderBottomRightRadius: '16px', // Adjust the radius as needed
-        //   borderBottom : '0px solid #42c195',
-        //   padding: '0.5rem 2rem',
           },
         }}
         variant="permanent"
@@ -58,6 +82,7 @@ export default function PermanentDrawerLeft() {
             { text: 'Store Order', icon: <StoreIcon /> },
             { text: 'Delivered', icon: <LocalShippingIcon /> },
             { text: 'Reverse Order', icon: <AssignmentReturnIcon /> },
+            { text: 'Store Integration', icon: <AssignmentReturnIcon /> },
             { text: 'Billing', icon: <PaymentIcon /> },
           ].map((item, index) => (
             <ListItem key={item.text} disablePadding>
@@ -68,7 +93,7 @@ export default function PermanentDrawerLeft() {
                   '&:hover': {
                     backgroundColor: '#333333',
                   },
-                  color: selectedIndex === index ? '#50C878' : '#f5f5f5', // Text color changes to green if selected
+                  color: selectedIndex === index ? '#50C878' : '#f5f5f5',
                   fontFamily: 'sans-serif',
                 }}
               >
