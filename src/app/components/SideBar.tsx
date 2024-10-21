@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -16,6 +14,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AssignmentReturnIcon, HomeIcon, LocalShippingIcon, MailIcon, StoreIcon } from '../utils/Icons';
+import AuthButtons from './Authbutton';
 
 const drawerWidth = 300;
 
@@ -52,6 +51,10 @@ export default function PermanentDrawerLeft() {
       default:
         break;
     }
+  };
+
+  const handleLogout = () => {
+    router.push('/api/auth/logout'); // Log out and redirect to auth logout
   };
 
   return (
@@ -108,9 +111,7 @@ export default function PermanentDrawerLeft() {
         <Divider />
         {/* Custom User Toolbar at the Bottom */}
         <Toolbar sx={{ justifyContent: 'center', marginTop: 'auto', paddingBottom: '1.8rem' }}>
-          <button>
-            <Image src='/User.png' height={40} width={40} alt='User' />
-          </button>
+         <AuthButtons/>
         </Toolbar>
       </Drawer>
     </Box>
