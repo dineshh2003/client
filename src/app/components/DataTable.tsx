@@ -1,77 +1,102 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface Product {
-    id: string;
-    orderId: string;
-    risk: string;
-    buyerIntent: string;
-    customer: string;
-    items: string;
-    orderDate: string;
+// Order-related interfaces
+interface TaxLine {
+  title: string;
+  price: string;
+  rate: string;
 }
 
-const staticProducts: Product[] = [
-    { id: '1', orderId: '#O100', risk: 'Low', buyerIntent: 'High', customer: 'John Doe', items: 'Item 1, Item 2', orderDate: '2024-10-10' },
-    { id: '2', orderId: '#O200', risk: 'Medium', buyerIntent: 'Moderate', customer: 'Jane Smith', items: 'Item 3, Item 4', orderDate: '2024-10-11' },
-    { id: '3', orderId: '#O300', risk: 'High', buyerIntent: 'Low', customer: 'Mike Ross', items: 'Item 5', orderDate: '2024-10-12' },
-    { id: '4', orderId: '#O400', risk: 'Low', buyerIntent: 'High', customer: 'Rachel Zane', items: 'Item 6', orderDate: '2024-10-13' },
-    { id: '5', orderId: '#O500', risk: 'Medium', buyerIntent: 'Moderate', customer: 'Harvey Specter', items: 'Item 7, Item 8', orderDate: '2024-10-14' },
-    { id: '6', orderId: '#O600', risk: 'High', buyerIntent: 'Low', customer: 'Louis Litt', items: 'Item 9', orderDate: '2024-10-15' },
-    { id: '7', orderId: '#O700', risk: 'Low', buyerIntent: 'High', customer: 'Jessica Pearson', items: 'Item 10', orderDate: '2024-10-16' },
-    { id: '1', orderId: '#O100', risk: 'Low', buyerIntent: 'High', customer: 'John Doe', items: 'Item 1, Item 2', orderDate: '2024-10-10' },
-    { id: '2', orderId: '#O200', risk: 'Medium', buyerIntent: 'Moderate', customer: 'Jane Smith', items: 'Item 3, Item 4', orderDate: '2024-10-11' },
-    { id: '3', orderId: '#O300', risk: 'High', buyerIntent: 'Low', customer: 'Mike Ross', items: 'Item 5', orderDate: '2024-10-12' },
-    { id: '4', orderId: '#O400', risk: 'Low', buyerIntent: 'High', customer: 'Rachel Zane', items: 'Item 6', orderDate: '2024-10-13' },
-    { id: '5', orderId: '#O500', risk: 'Medium', buyerIntent: 'Moderate', customer: 'Harvey Specter', items: 'Item 7, Item 8', orderDate: '2024-10-14' },
-    { id: '6', orderId: '#O600', risk: 'High', buyerIntent: 'Low', customer: 'Louis Litt', items: 'Item 9', orderDate: '2024-10-15' },
-    { id: '7', orderId: '#O700', risk: 'Low', buyerIntent: 'High', customer: 'Jessica Pearson', items: 'Item 10', orderDate: '2024-10-16' },
-    { id: '1', orderId: '#O100', risk: 'Low', buyerIntent: 'High', customer: 'John Doe', items: 'Item 1, Item 2', orderDate: '2024-10-10' },
-    { id: '2', orderId: '#O200', risk: 'Medium', buyerIntent: 'Moderate', customer: 'Jane Smith', items: 'Item 3, Item 4', orderDate: '2024-10-11' },
-    { id: '3', orderId: '#O300', risk: 'High', buyerIntent: 'Low', customer: 'Mike Ross', items: 'Item 5', orderDate: '2024-10-12' },
-    { id: '4', orderId: '#O400', risk: 'Low', buyerIntent: 'High', customer: 'Rachel Zane', items: 'Item 6', orderDate: '2024-10-13' },
-    { id: '5', orderId: '#O500', risk: 'Medium', buyerIntent: 'Moderate', customer: 'Harvey Specter', items: 'Item 7, Item 8', orderDate: '2024-10-14' },
-    { id: '6', orderId: '#O600', risk: 'High', buyerIntent: 'Low', customer: 'Louis Litt', items: 'Item 9', orderDate: '2024-10-15' },
-    { id: '7', orderId: '#O700', risk: 'Low', buyerIntent: 'High', customer: 'Jessica Pearson', items: 'Item 10', orderDate: '2024-10-16' },
-    // Add more data to test the scrolling
-];
+interface LineItem {
+  id: number;
+  product_id: number;
+  variant_id: number;
+  quantity: number;
+  price: string;
+  total_discount: string;
+  title: string;
+  variant_title: string;
+  vendor: string;
+  taxable: boolean;
+  tax_lines: TaxLine[];
+}
 
-export default function CustomStyledGridTable() {
-    const [products, setProducts] = useState<Product[]>([]);
+interface Order {
+  id: number;
+  name: string;
+  created_at: string;
+  total_price: string;
+  currency: string;
+  financial_status: string;
+  total_tax: string;
+  line_items: LineItem[];
+  customer: string;
+  risk: string;
+  buyerIntent: string;
+}
 
-    useEffect(() => {
-        setProducts(staticProducts);
-    }, []);
+// Component
+export default function StoreOrderPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    return (
-        <div className="card font-sans bg-[#1d1f27] rounded-lg p-4 mt-2">
-            <div className="grid grid-cols-7 gap-4 text-left text-[#808080] bg-[#292b35] p-3 rounded-t-lg">
-                <div>Order ID</div>
-                <div>Risk</div>
-                <div>Buyer Intent</div>
-                <div>Customer</div>
-                <div>Items</div>
-                <div>Order Date</div>
-                <div>Action</div>
+  const key = 'orders_quickstart-5091d5ef.myshopify.com'; // Update key accordingly
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/get-cached-orders?key=${key}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
+      const data: Order[] = await response.json();
+      setOrders(data);
+    } catch (err) {
+      setError((err as Error).message || 'An unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  if (loading) return <p>Loading orders...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+
+  return (
+    <div className="card font-sans bg-[#1d1f27] rounded-lg p-4 mt-2">
+      <div className="grid grid-cols-7 gap-4 text-left text-[#808080] bg-[#292b35] p-3 rounded-t-lg">
+        <div>Order ID</div>
+        <div>Risk</div>
+        <div>Buyer Intent</div>
+        <div>Customer</div>
+        <div>Items</div>
+        <div>Order Date</div>
+        <div>Action</div>
+      </div>
+      <div className="grid grid-cols-7 gap-0 bg-[#282A2F] text-white overflow-auto scrollbar-none max-h-[750px]">
+        {orders.map((order) => (
+          <React.Fragment key={order.id}>
+            <div className="p-3">{order.name}</div>
+            <div className="p-3">{order.risk || 'Low'}</div>
+            <div className="p-3">{order.buyerIntent || 'Normal'}</div>
+            <div className="p-3">{order.customer || 'Unknown'}</div>
+            <div className="p-3">{order.line_items.length}</div>
+            <div className="p-3">
+              {new Date(order.created_at).toLocaleString()}
             </div>
-            <div className="grid grid-cols-7 gap-0 bg-[#282A2F] text-white overflow-auto scrollbar-none max-h-[750px]">
-                {products.map((product) => (
-                    <React.Fragment key={product.id}>
-                        <div className="p-3">{product.orderId}</div>
-                        <div className="p-3">{product.risk}</div>
-                        <div className="p-3">{product.buyerIntent}</div>
-                        <div className="p-3">{product.customer}</div>
-                        <div className="p-3">{product.items}</div>
-                        <div className="p-3">{product.orderDate}</div>
-                        <div className="p-3">
-                            <button className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md">
-                                Action
-                            </button>
-                        </div>
-                    </React.Fragment>
-                ))}
+            <div className="p-3">
+              <button className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md">
+                Action
+              </button>
             </div>
-        </div>
-    );
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
 }
