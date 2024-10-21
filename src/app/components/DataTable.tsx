@@ -1,81 +1,102 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface StoreOrdersPageProps {
-  storeName: string;
-  token: string;
+// Order-related interfaces
+interface TaxLine {
+  title: string;
+  price: string;
+  rate: string;
 }
 
-const StoreOrdersPage: React.FC<StoreOrdersPageProps> = ({ storeName, token }) => {
-  const [orders, setOrders] = useState(null);
+interface LineItem {
+  id: number;
+  product_id: number;
+  variant_id: number;
+  quantity: number;
+  price: string;
+  total_discount: string;
+  title: string;
+  variant_title: string;
+  vendor: string;
+  taxable: boolean;
+  tax_lines: TaxLine[];
+}
+
+interface Order {
+  id: number;
+  name: string;
+  created_at: string;
+  total_price: string;
+  currency: string;
+  financial_status: string;
+  total_tax: string;
+  line_items: LineItem[];
+  customer: string;
+  risk: string;
+  buyerIntent: string;
+}
+
+// Component
+export default function StoreOrderPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const key = 'orders_quickstart-5091d5ef.myshopify.com'; // Update key accordingly
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/get-cached-orders?key=${key}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
+      const data: Order[] = await response.json();
+      setOrders(data);
+    } catch (err) {
+      setError((err as Error).message || 'An unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      // Log initial variables
-      console.log('Attempting to fetch orders...');
-      console.log('Store Name:', storeName);
-      console.log('Token:', token);
+    fetchOrders();
+  }, []);
 
-      try {
-        const url = `http://localhost:8080/shopify/order?store=${storeName}&token=${token}`;
-        console.log('Constructed URL:', url);
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        // Log response status
-        console.log('Response Status:', response.status);
-
-        if (!response.ok) {
-          // Log response details in case of an error
-          const errorText = await response.text();
-          console.log('Response Error Text:', errorText);
-          throw new Error(`Failed to fetch orders: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log('Orders fetched successfully:', data);
-        setOrders(data); // Assuming data is the list of orders
-      } catch (err) {
-        console.error('Error fetching orders:', err);
-        setError('Failed to fetch orders. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (storeName && token) {
-      fetchOrders();
-    } else {
-      console.warn('Store name or token is missing');
-    }
-  }, [storeName, token]);
-
-  if (loading) {
-    return <p>Loading orders...</p>;
-  }
-
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
+  if (loading) return <p>Loading orders...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
-    <div>
-      <h2>Orders for {storeName}</h2>
-      {orders ? (
-        <pre>{JSON.stringify(orders, null, 2)}</pre> 
-      ) : (
-        <p>No orders available</p>
-      )}
+    <div className="card font-sans bg-[#1d1f27] rounded-lg p-4 mt-2">
+      <div className="grid grid-cols-7 gap-4 text-left text-[#808080] bg-[#292b35] p-3 rounded-t-lg">
+        <div>Order ID</div>
+        <div>Risk</div>
+        <div>Buyer Intent</div>
+        <div>Customer</div>
+        <div>Items</div>
+        <div>Order Date</div>
+        <div>Action</div>
+      </div>
+      <div className="grid grid-cols-7 gap-0 bg-[#282A2F] text-white overflow-auto scrollbar-none max-h-[750px]">
+        {orders.map((order) => (
+          <React.Fragment key={order.id}>
+            <div className="p-3">{order.name}</div>
+            <div className="p-3">{order.risk || 'Low'}</div>
+            <div className="p-3">{order.buyerIntent || 'Normal'}</div>
+            <div className="p-3">{order.customer || 'Unknown'}</div>
+            <div className="p-3">{order.line_items.length}</div>
+            <div className="p-3">
+              {new Date(order.created_at).toLocaleString()}
+            </div>
+            <div className="p-3">
+              <button className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md">
+                Action
+              </button>
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
-};
-
-export default StoreOrdersPage;
+}

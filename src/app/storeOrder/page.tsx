@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+c
 
 interface Money {
   amount: string;
