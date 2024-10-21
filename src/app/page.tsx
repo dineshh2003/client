@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useUser, SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -87,12 +87,11 @@ export default function HomePage() {
                 </Link>
               </>
             ) : (
-              <Link
-                href="/sign-in"
-                className="bg-green-500 text-white py-2 px-4 rounded shadow-lg hover:bg-green-600"
-              >
-                Login
-              </Link>
+              <SignInButton>
+                <button className="bg-green-500 text-white py-2 px-4 rounded shadow-lg hover:bg-green-600">
+                  Login
+                </button>
+              </SignInButton>
             )
           ) : (
             <p>Loading...</p>

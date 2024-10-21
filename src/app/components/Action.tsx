@@ -1,7 +1,5 @@
 import { Cancel } from '@mui/icons-material'
-import { Divider } from '@mui/material'
 import React from 'react'
-import CustomCheckbox from '../utils/CustomCheckbox'
 import SplitButton from '../utils/ButtonGrp'
 import CompanyCard from './CompanyCard'
 

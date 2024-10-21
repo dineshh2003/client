@@ -58,7 +58,7 @@ export default function PermanentDrawerLeft() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' , height : '100vh' , overflow: 'hidden'}}>
       <CssBaseline />
       <Drawer
         sx={{

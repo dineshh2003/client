@@ -1,16 +1,9 @@
-// app/layout.tsx (or layout.jsx if using JavaScript)
 import type { Metadata } from "next";
 import "./globals.css";
 import 'primereact/resources/themes/saga-blue/theme.css'; // Or any other PrimeReact theme
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 
 // Metadata for SEO and document head
 export const metadata: Metadata = {
@@ -26,13 +19,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="">
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+        <body>
           {children}
         </body>
       </html>

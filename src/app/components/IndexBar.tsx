@@ -15,8 +15,9 @@ const IndexBar = () => {
         bgcolor: '#121212',
         display : 'flex',
         justifyContent : 'right',
-        fontFamily : 'sans-serif'
-
+        fontFamily : 'sans-serif',
+        paddingTop: '30px',
+        marginTop : '35px'
       }}
       elevation={0}
     >
