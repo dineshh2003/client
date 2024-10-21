@@ -1,51 +1,72 @@
+"use client";
 
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useAuth, useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
-import React from 'react';
-import PermanentDrawerLeft from './components/SideBar'; 
-import { Appbar } from './components/Appbar'; 
-import IndexBar from './components/IndexBar'; 
-import { Box, Divider, Toolbar } from '@mui/material'; 
-import TrackBar from './components/TrackBar';
-import ModifyBar from './components/ModifyBar';
-import DataTable from './components/DataTable';
-import OrdersTable from './components/DataTable';
-import CheckboxRowSelectionDemo from './components/DataTable';
-import ProgressBar from './components/ProgressBar';
+export default function HomePage() {
+  const { isLoaded, userId } = useAuth(); // Clerk's auth hook to check if the user is authenticated
+  const { user } = useUser(); // Get user info if available
+  const router = useRouter();
 
-const App: React.FC = () => {
+  // Redirect to storeorders page if logged in
+  useEffect(() => {
+    if (isLoaded && userId) {
+      router.push("/storeorders");
+    }
+  }, [isLoaded, userId, router]);
+
   return (
-    // <Box 
-    //   sx={{ 
-    //     display: 'flex', 
-    //     height: '100vh', 
-    //     backgroundColor: '#121212'
-    //   }}
-    // >
-    //   <PermanentDrawerLeft />
-    //   <Box 
-    //     sx={{ 
-    //       flexGrow: 1, 
-    //       display: 'flex', 
-    //       flexDirection: 'column',
-    //       border: '1px solid #42C195', 
-    //       borderRadius: '45px', 
-    //       overflow: 'hidden' 
-    //     }}
-    //   >
-    //     <Appbar /> 
-    //     <Box sx={{ padding: '1rem', flexGrow: 1, backgroundColor: '#121212', color: '#fff', mt: '4.5rem' }}>
-    //       <IndexBar /> 
-    //       <TrackBar/>
-    //       <ModifyBar/>
-    //       <CheckboxRowSelectionDemo/>
-    //       <ProgressBar/>
-    //     </Box>
-    //   </Box>
-    // </Box>
-    <div>
-      hello jiii
+    <div className="flex flex-col md:flex-row h-[calc(100vh-8rem)] gap-4 bg-gradient-to-r from-b2 to-b3">
+      {/* Image Section */}
+      <div className="flex flex-1 items-center justify-center md:justify-end my-auto">
+        <Image
+          src="https://itl-website-aws.s3.ap-south-1.amazonaws.com/manage/assets/images/home-page-home-logistic-services2x.png"
+          height={1000}
+          width={1000}
+          alt="Landing Image"
+          className="max-w-full h-auto"
+        />
+      </div>
+
+      {/* Text Section */}
+      <div className="flex flex-1 flex-col justify-center items-center gap-5 px-4">
+        <h1 className="text-5xl font-bold text-green">Welcome to Logistics</h1>
+        <p className="text-2xl text-slate-400">Delivering the future, today.</p>
+
+        {/* Conditional Login/Logout Buttons */}
+        <div className="flex gap-4">
+          {isLoaded ? (
+            userId ? (
+              <>
+                <Link 
+                  href="/api/auth/logout"
+                  className="bg-red-500 text-white py-2 px-4 rounded"
+                >
+                  Logout
+                </Link>
+                <Link 
+                  href="/storeorders"
+                  className="bg-blue-600 text-white py-2 px-4 rounded"
+                >
+                  Go to Store Orders
+                </Link>
+              </>
+            ) : (
+              <Link 
+                href="/sign-in"
+                className="bg-green-500 text-white py-2 px-4 rounded"
+              >
+                Login
+              </Link>
+            )
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
+      </div>
     </div>
   );
-};
-
-export default App;
+}
