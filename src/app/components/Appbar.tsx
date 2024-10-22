@@ -1,8 +1,14 @@
+
+
 import { Button, Box, AppBar, Toolbar, IconButton } from '@mui/material';
 import { AddIcon, HelpIcon, NightIcon, RestartIcon, SettingIcon, WalletIcon } from '../utils/Icons';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import SettingApp from '../utils/SettingButton';
+interface AppbarProps {
+  setView: (view: 'home' | 'warehouse') => void;
+}
 
-export const Appbar = () => {
+export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
   return (
     <div className='w-auto bg-[#121212]'>
       <AppBar
@@ -62,7 +68,7 @@ export const Appbar = () => {
           {/* Right side buttons */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <IconButton sx={{ color: '#50C878' }}>
-              <SettingIcon />
+              <SettingApp setView={setView} /> {/* Pass setView here */}
             </IconButton>
             <IconButton sx={{ color: '#50C878' }}>
               <HelpIcon />

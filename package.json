@@ -18,6 +18,7 @@
     "@mui/x-data-grid": "^7.20.0",
     "@mui/x-data-grid-generator": "^7.20.0",
     "@mui/x-data-grid-pro": "^7.20.0",
+    "@nextui-org/react": "^2.4.8",
     "@shopify/shopify-api": "^11.5.0",
     "docker": "^1.0.0",
     "framer-motion": "^11.11.9",

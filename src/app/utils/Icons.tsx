@@ -219,3 +219,23 @@ export const CancelIcon = () =>{
 }
 
 
+
+export const LowIcon = () =>{
+    return(
+        <div>
+            <Image src='/low.png' height={30} width={30} alt=''/>
+        </div>
+    )
+}
+
+
+
+export const mediumRiskIcon = () =>{
+    return(
+        <div>
+            <Image src='/medium.png' height={30} width={30} alt=''/>
+        </div>
+    )
+}
+
+

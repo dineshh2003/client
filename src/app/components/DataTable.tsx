@@ -1,102 +1,98 @@
-'use client';
+import React, { useState } from "react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input } from "@nextui-org/react";
+import { LowIcon } from '../utils/Icons';
+import { Order } from "../utils/ordersInterface";
 
-import React, { useEffect, useState } from 'react';
+const StoreOrderPage: React.FC<{ orders: Order[] }> = ({ orders }) => {
+  const [filterValue, setFilterValue] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<string>("");
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
-// Order-related interfaces
-interface TaxLine {
-  title: string;
-  price: string;
-  rate: string;
-}
+  // Filter orders based on Order ID and Date
+  const filteredOrders = orders.filter((order) => {
+    const matchesOrderId = order.id?.toString().toLowerCase().includes(filterValue.toLowerCase());
+    const matchesDate = dateFilter && order.createdAt
+      ? new Date(order.createdAt).toLocaleDateString() === new Date(dateFilter).toLocaleDateString()
+      : true;
+    return matchesOrderId && matchesDate;
+  });
 
-interface LineItem {
-  id: number;
-  product_id: number;
-  variant_id: number;
-  quantity: number;
-  price: string;
-  total_discount: string;
-  title: string;
-  variant_title: string;
-  vendor: string;
-  taxable: boolean;
-  tax_lines: TaxLine[];
-}
-
-interface Order {
-  id: number;
-  name: string;
-  created_at: string;
-  total_price: string;
-  currency: string;
-  financial_status: string;
-  total_tax: string;
-  line_items: LineItem[];
-  customer: string;
-  risk: string;
-  buyerIntent: string;
-}
-
-// Component
-export default function StoreOrderPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const key = 'orders_quickstart-5091d5ef.myshopify.com'; // Update key accordingly
-
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/get-cached-orders?key=${key}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch orders');
-      }
-      const data: Order[] = await response.json();
-      setOrders(data);
-    } catch (err) {
-      setError((err as Error).message || 'An unknown error occurred');
-    } finally {
-      setLoading(false);
+  // Toggle row selection (supports multiple selection)
+  const toggleRowSelection = (orderId: number | undefined) => {
+    if (!orderId) return;
+    const updatedSelection = new Set(selectedRows);
+    if (updatedSelection.has(orderId)) {
+      updatedSelection.delete(orderId);
+    } else {
+      updatedSelection.add(orderId);
     }
+    setSelectedRows(updatedSelection);
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  if (loading) return <p>Loading orders...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-
   return (
-    <div className="card font-sans bg-[#1d1f27] rounded-lg p-4 mt-2">
-      <div className="grid grid-cols-7 gap-4 text-left text-[#808080] bg-[#292b35] p-3 rounded-t-lg">
-        <div>Order ID</div>
-        <div>Risk</div>
-        <div>Buyer Intent</div>
-        <div>Customer</div>
-        <div>Items</div>
-        <div>Order Date</div>
-        <div>Action</div>
+    <div className="flex flex-col gap-4 my-4 rounded-xl p-4 bg-[#282A2F] text-black">
+      {/* Search Fields */}
+      <div className="flex flex-row gap-3">
+        <Input
+          isClearable
+          className="w-64 sm:max-w-[44%] bg-slate-900 p-1"
+          placeholder="Search by Order ID..."
+          value={filterValue}
+          onClear={() => setFilterValue("")}
+          onValueChange={(value) => setFilterValue(value)}
+        />
+        <Input
+          type="date"
+          className="w-64 sm:max-w-[44%] bg-slate-900 p-1"
+          value={dateFilter}
+          onValueChange={(value) => setDateFilter(value)}
+          placeholder="Search by Date..."
+        />
       </div>
-      <div className="grid grid-cols-7 gap-0 bg-[#282A2F] text-white overflow-auto scrollbar-none max-h-[750px]">
-        {orders.map((order) => (
-          <React.Fragment key={order.id}>
-            <div className="p-3">{order.name}</div>
-            <div className="p-3">{order.risk || 'Low'}</div>
-            <div className="p-3">{order.buyerIntent || 'Normal'}</div>
-            <div className="p-3">{order.customer || 'Unknown'}</div>
-            <div className="p-3">{order.line_items.length}</div>
-            <div className="p-3">
-              {new Date(order.created_at).toLocaleString()}
-            </div>
-            <div className="p-3">
-              <button className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md">
-                Action
-              </button>
-            </div>
-          </React.Fragment>
-        ))}
-      </div>
+
+      {/* Order Table with multiple row selection */}
+      <Table aria-label="Order Table" selectionMode="multiple" color="success">
+        <TableHeader className="bg-gray-600 text-white">
+          <TableColumn>ORDER ID</TableColumn>
+          <TableColumn>RISK</TableColumn>
+          <TableColumn>BUYER INTENT</TableColumn>
+          <TableColumn>CUSTOMER</TableColumn>
+          <TableColumn>ITEMS</TableColumn>
+          <TableColumn>ORDER DATE</TableColumn>
+          <TableColumn>ACTION</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {filteredOrders.map((order) => (
+            <TableRow
+              key={order.id}
+              style={{ backgroundColor: selectedRows.has(order.id || 0) ? 'green' : 'gray-300' }}
+            >
+              <TableCell>{order.name}</TableCell>
+              <TableCell>
+                <LowIcon />
+              </TableCell>
+              <TableCell>{order.orderNumber|| 'Normal'}</TableCell>
+              <TableCell>
+                {order.customer
+                  ? `${order.customer.firstName} ${order.customer.lastName}`
+                  : 'Unknown'}
+              </TableCell>
+              <TableCell>{order.lineItems?.length || 0}</TableCell>
+              <TableCell>{order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A'}</TableCell>
+              <TableCell>
+                <button
+                  className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md"
+                  onClick={() => toggleRowSelection(order.id)}
+                >
+                  {selectedRows.has(order.id || 0) ? "Deselect" : "Select"}
+                </button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
-}
+};
+
+export default StoreOrderPage;
