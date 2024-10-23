@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button, Box, Toolbar, IconButton } from '@mui/material';
 import { AddIcon, HelpIcon, NightIcon, RestartIcon, SettingIcon, WalletIcon } from '../utils/Icons';
@@ -13,8 +13,8 @@ import StoreOrderPage from '../components/DataTable';
 import React, { useState, useEffect } from 'react';
 import { DropdownItem } from '@nextui-org/react';
 import { Appbar } from '../components/Appbar';
-import {Order} from '../utils/ordersInterface'
-
+import { Order } from '../utils/ordersInterface';
+import OrderTableSkeleton from '../utils/OrderTableSkeleton'; // Import the skeleton component
 
 const Page: React.FC = () => {
   const [view, setView] = useState<'home' | 'warehouse'>('home'); // Manage which view is active
@@ -45,6 +45,7 @@ const Page: React.FC = () => {
   }, []);
 
   const handleSync = () => {
+    setLoading(true);
     window.location.href = "/api/shopify/auth?shop=quickstart-5091d5ef.myshopify.com";
   };
 
@@ -64,8 +65,7 @@ const Page: React.FC = () => {
         }}
       >
         <Box sx={{ paddingX: '1rem', flexGrow: 1, backgroundColor: '#121212', color: '#fff', overflowY: 'auto' }}>
-        <Appbar setView={setView} />
-
+          <Appbar setView={setView} />
 
           {/* Conditionally render components based on the view state */}
           {view === 'home' && (
@@ -74,11 +74,13 @@ const Page: React.FC = () => {
               <TrackBar onSync={handleSync} />
               {/* <ModifyBar /> */}
               {loading ? (
-                <p>Loading orders...</p>
+                // Use the skeleton loader when data is loading
+                <OrderTableSkeleton />
               ) : error ? (
                 <p className="text-red-500">Error: {error}</p>
               ) : (
-                <StoreOrderPage orders={orders} />
+                // Pass loading and orders as props
+                <StoreOrderPage orders={orders} loading={loading} />
               )}
             </>
           )}

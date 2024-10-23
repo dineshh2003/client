@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface Address {
   id: number;
@@ -18,11 +19,19 @@ interface AddressCardProps {
   address: Address;
 }
 
-
-
 const AddressCard: React.FC<AddressCardProps> = ({ address }) => {
   return (
-    <div className="bg-[#2f3136] p-8 rounded-xl shadow-md text-white w-[600px] relative font-poppins ">
+    <motion.div
+      className="bg-[#2f3136] p-8 rounded-xl shadow-md text-white w-[600px] relative font-poppins"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.05 }} // Hover effect
+      transition={{
+        duration: 0.3,
+        ease: [0, 0.71, 0.2, 1.01],
+        scale: { type: 'spring', damping: 5, stiffness: 100, restDelta: 0.001 },
+      }}
+    >
       {address.isDefault && (
         <div className="absolute top-4 left-4 bg-[#0B815A] px-2 py-1 text-xs rounded-md">
           DEFAULT
@@ -59,7 +68,7 @@ const AddressCard: React.FC<AddressCardProps> = ({ address }) => {
         <div>Email</div>
         <div className="text-white">{address.email}</div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

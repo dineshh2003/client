@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input } from "@nextui-org/react";
 import { LowIcon } from '../utils/Icons';
 import { Order } from "../utils/ordersInterface";
+import { Skeleton } from '@mui/material'; // Import Skeleton from MUI
 
-const StoreOrderPage: React.FC<{ orders: Order[] }> = ({ orders }) => {
+const StoreOrderPage: React.FC<{ orders: Order[], loading: boolean }> = ({ orders, loading }) => {
   const [filterValue, setFilterValue] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
@@ -61,34 +62,65 @@ const StoreOrderPage: React.FC<{ orders: Order[] }> = ({ orders }) => {
           <TableColumn>ORDER DATE</TableColumn>
           <TableColumn>ACTION</TableColumn>
         </TableHeader>
-        <TableBody>
-          {filteredOrders.map((order) => (
-            <TableRow
-              key={order.id}
-              style={{ backgroundColor: selectedRows.has(order.id || 0) ? 'green' : 'gray-300' }}
-            >
-              <TableCell>{order.name}</TableCell>
-              <TableCell>
-                <LowIcon />
-              </TableCell>
-              <TableCell>{order.orderNumber|| 'Normal'}</TableCell>
-              <TableCell>
-                {order.customer
-                  ? `${order.customer.firstName} ${order.customer.lastName}`
-                  : 'Unknown'}
-              </TableCell>
-              <TableCell>{order.lineItems?.length || 0}</TableCell>
-              <TableCell>{order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A'}</TableCell>
-              <TableCell>
-                <button
-                  className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md"
-                  onClick={() => toggleRowSelection(order.id)}
-                >
-                  {selectedRows.has(order.id || 0) ? "Deselect" : "Select"}
-                </button>
-              </TableCell>
-            </TableRow>
-          ))}
+
+        {/* Apply overflow-scroll and hide scrollbar */}
+        <TableBody className="overflow-scroll scrollbar-hide max-h-96">
+          {loading ? (
+            // Display Skeleton Rows when loading is true
+            [...Array(20)].map((_, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Skeleton animation="wave" width={80} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton animation="wave" width={40} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton animation="wave" width={60} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton animation="wave" width={120} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton animation="wave" width={30} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton animation="wave" width={100} />
+                </TableCell>
+                <TableCell>
+                  <Skeleton animation="wave" width={90} />
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            filteredOrders.map((order) => (
+              <TableRow
+                key={order.id}
+                style={{ backgroundColor: selectedRows.has(order.id || 0) ? 'green' : 'gray-300', overflow: 'scroll' }}
+              >
+                <TableCell>{order.name}</TableCell>
+                <TableCell>
+                  <LowIcon />
+                </TableCell>
+                <TableCell>{order.orderNumber || 'Normal'}</TableCell>
+                <TableCell>
+                  {order.customer
+                    ? `${order.customer.firstName} ${order.customer.lastName}`
+                    : 'Unknown'}
+                </TableCell>
+                <TableCell>{order.lineItems?.length || 0}</TableCell>
+                <TableCell>{order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A'}</TableCell>
+                <TableCell>
+                  <button
+                    className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md"
+                    onClick={() => toggleRowSelection(order.id)}
+                  >
+                    {selectedRows.has(order.id || 0) ? "Deselect" : "Select"}
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

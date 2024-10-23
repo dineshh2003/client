@@ -22,6 +22,7 @@ export interface Order {
     totalDiscountSet?: AmountSet;
     currentTotalDiscounts?: string;
     currentTotalDiscountsSet?: AmountSet;
+    
     totalLineItemsPrice?: string;
     taxesIncluded?: boolean;
     totalTax?: string;

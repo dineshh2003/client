@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface AddressFormProps {
   onCancel: () => void;
@@ -6,12 +7,19 @@ interface AddressFormProps {
 
 const WarehouseAddressForm: React.FC<AddressFormProps> = ({ onCancel }) => {
   return (
-    <div className="relative mt-6 flex flex-col justify-center items-center bg-neutral-800 text-white p-6 rounded-lg w-[75vw]" >
+    <motion.div
+      className="relative mt-6 flex flex-col justify-center items-center bg-neutral-800 text-white p-6 rounded-lg w-[75vw]"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
+      exit={{ opacity: 0, y: -50 }}
+    >
       <h2 className="text-xl font-bold mb-4">Edit Pickup Address</h2>
       
       <button onClick={onCancel} className="absolute top-2 right-2 text-white">
         ✕
       </button>
+      
       
       <form className="grid gap-4">
         <div>
@@ -85,7 +93,7 @@ const WarehouseAddressForm: React.FC<AddressFormProps> = ({ onCancel }) => {
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg">Update</button>
         </div>
       </form>
-    </div>
+      </motion.div>
   );
 };
 

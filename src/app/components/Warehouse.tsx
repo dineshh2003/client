@@ -2,6 +2,25 @@ import React, { useState } from 'react';
 import AddressCard from '../utils/WarehouseCard'; // Assuming AddressCard is in the utils directory
 import WarehouseAddressForm from '../utils/WarehouseForm'; // Import the AddressForm component
 
+import { motion } from 'framer-motion';
+
+const staggerContainer = {
+  hidden: { opacity: 1 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+
+
 interface Address {
   id: number;
   name: string;
@@ -110,15 +129,13 @@ const addresses: Address[] = [
     isDefault: false,
   },
 ];
-
 const Warehouse: React.FC = () => {
   const [isAddingNew, setIsAddingNew] = useState(false);
 
-  // Toggle between address cards and the form
   const toggleForm = () => setIsAddingNew((prev) => !prev);
 
   return (
-    <div className=" flex flex-col justify-center my-24 px-8 relative bg-neutral-900 h-[80vh] rounded-xl p-3">
+    <div className="flex flex-col justify-center my-24 px-8 relative bg-neutral-900 h-[80vh] rounded-xl p-3">
       {!isAddingNew ? (
         <>
           <div className="flex justify-between">
@@ -128,11 +145,18 @@ const Warehouse: React.FC = () => {
             </button>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll scrollbar-hide">
+          <motion.div
+            className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll scrollbar-hide"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
             {addresses.map((address) => (
-              <AddressCard key={address.id} address={address} />
+              <motion.div key={address.id} variants={cardVariants}>
+                <AddressCard key={address.id} address={address} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </>
       ) : (
         <WarehouseAddressForm onCancel={toggleForm} />
