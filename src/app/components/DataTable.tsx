@@ -1,57 +1,28 @@
 import React, { useState } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input } from "@nextui-org/react";
-import { LowIcon } from '../utils/Icons';
-import { Order } from "../utils/ordersInterface";
-import { Skeleton } from '@mui/material'; // Import Skeleton from MUI
+import { 
+  Table, TableHeader, TableColumn, TableBody, 
+  TableRow, TableCell 
+} from "@nextui-org/react";
+import { LowIcon } from "../utils/Icons";
+import { Skeleton } from "@mui/material"; 
+import { FirestoreOrder } from "@/types/order";
 
-const StoreOrderPage: React.FC<{ orders: Order[], loading: boolean }> = ({ orders, loading }) => {
-  const [filterValue, setFilterValue] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<string>("");
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+const StoreOrderPage: React.FC<{ orders?: FirestoreOrder[]; loading: boolean }> = ({ orders = [], loading }) => {
 
-  // Filter orders based on Order ID and Date
-  const filteredOrders = orders.filter((order) => {
-    const matchesOrderId = order.id?.toString().toLowerCase().includes(filterValue.toLowerCase());
-    const matchesDate = dateFilter && order.createdAt
-      ? new Date(order.createdAt).toLocaleDateString() === new Date(dateFilter).toLocaleDateString()
-      : true;
-    return matchesOrderId && matchesDate;
-  });
+  console.log(orders);
 
-  // Toggle row selection (supports multiple selection)
-  const toggleRowSelection = (orderId: number | undefined) => {
-    if (!orderId) return;
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+
+  // Toggle row selection
+  const toggleRowSelection = (orderID: string | undefined) => {
+    if (!orderID) return;
     const updatedSelection = new Set(selectedRows);
-    if (updatedSelection.has(orderId)) {
-      updatedSelection.delete(orderId);
-    } else {
-      updatedSelection.add(orderId);
-    }
+    updatedSelection.has(orderID) ? updatedSelection.delete(orderID) : updatedSelection.add(orderID);
     setSelectedRows(updatedSelection);
   };
 
   return (
     <div className="flex flex-col gap-4 my-4 rounded-xl p-4 bg-[#282A2F] text-black">
-      {/* Search Fields */}
-      <div className="flex flex-row gap-3">
-        <Input
-          isClearable
-          className="w-64 sm:max-w-[44%] bg-slate-900 p-1"
-          placeholder="Search by Order ID..."
-          value={filterValue}
-          onClear={() => setFilterValue("")}
-          onValueChange={(value) => setFilterValue(value)}
-        />
-        <Input
-          type="date"
-          className="w-64 sm:max-w-[44%] bg-slate-900 p-1"
-          value={dateFilter}
-          onValueChange={(value) => setDateFilter(value)}
-          placeholder="Search by Date..."
-        />
-      </div>
-
-      {/* Order Table with multiple row selection */}
       <Table aria-label="Order Table" selectionMode="multiple" color="success">
         <TableHeader className="bg-gray-600 text-white">
           <TableColumn>ORDER ID</TableColumn>
@@ -63,59 +34,70 @@ const StoreOrderPage: React.FC<{ orders: Order[], loading: boolean }> = ({ order
           <TableColumn>ACTION</TableColumn>
         </TableHeader>
 
-        {/* Apply overflow-scroll and hide scrollbar */}
-        <TableBody className="overflow-scroll scrollbar-hide max-h-96">
+        <TableBody className="overflow-scroll scrollbar-hIDe max-h-96">
           {loading ? (
-            // Display Skeleton Rows when loading is true
+            // Render skeleton loading state
             [...Array(20)].map((_, index) => (
               <TableRow key={index}>
-                <TableCell>
-                  <Skeleton animation="wave" width={80} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton animation="wave" width={40} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton animation="wave" width={60} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton animation="wave" width={120} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton animation="wave" width={30} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton animation="wave" width={100} />
-                </TableCell>
-                <TableCell>
-                  <Skeleton animation="wave" width={90} />
-                </TableCell>
+                <TableCell><Skeleton animation="wave" width={80} /></TableCell>
+                <TableCell><Skeleton animation="wave" width={40} /></TableCell>
+                <TableCell><Skeleton animation="wave" width={60} /></TableCell>
+                <TableCell><Skeleton animation="wave" width={120} /></TableCell>
+                <TableCell><Skeleton animation="wave" width={30} /></TableCell>
+                <TableCell><Skeleton animation="wave" width={100} /></TableCell>
+                <TableCell><Skeleton animation="wave" width={90} /></TableCell>
               </TableRow>
             ))
+            ) : orders == null? (
+              // Render "No data found" message if no orders are available
+              <TableRow>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+              <TableCell colSpan={7} className="text-center py-4 text-white">
+                No data found
+              </TableCell>
+            </TableRow>
           ) : (
-            filteredOrders.map((order) => (
+            // Render the orders if they exist
+            orders.map((order) => (
               <TableRow
-                key={order.id}
-                style={{ backgroundColor: selectedRows.has(order.id || 0) ? 'green' : 'gray-300', overflow: 'scroll' }}
+                key={order.ID}
+                style={{
+                  backgroundColor: selectedRows.has(order.ID || "") ? "green" : "#d1d5db",
+                }}
               >
-                <TableCell>{order.name}</TableCell>
-                <TableCell>
-                  <LowIcon />
+                <TableCell key={order.ID}>{order.ID || "N/A"}</TableCell>
+                <TableCell key={order.ID}><LowIcon /></TableCell>
+                <TableCell key={order.ID}>{order.createdAt || "Normal"}</TableCell>
+                <TableCell key={order.ID}>
+                  {order.customer 
+                    ? `${order.customer}` 
+                    : "Unknown"}
                 </TableCell>
-                <TableCell>{order.orderNumber || 'Normal'}</TableCell>
-                <TableCell>
-                  {order.customer
-                    ? `${order.customer.firstName} ${order.customer.lastName}`
-                    : 'Unknown'}
-                </TableCell>
-                <TableCell>{order.lineItems?.length || 0}</TableCell>
-                <TableCell>{order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A'}</TableCell>
-                <TableCell>
+                <TableCell key={order.ID}>{order.Name?.length || 0}</TableCell>
+                <TableCell key={order.ID}>{order.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}</TableCell>
+                <TableCell key={order.ID}>
                   <button
                     className="bg-[#292b35] text-[#BE74BA] px-4 py-2 rounded-md"
-                    onClick={() => toggleRowSelection(order.id)}
-                  >
-                    {selectedRows.has(order.id || 0) ? "Deselect" : "Select"}
+                    onClick={() => toggleRowSelection(order.ID)}
+                    >
+                    {selectedRows.has(order.ID || "") ? "Deselect" : "Select"}
                   </button>
                 </TableCell>
               </TableRow>
@@ -123,7 +105,7 @@ const StoreOrderPage: React.FC<{ orders: Order[], loading: boolean }> = ({ order
           )}
         </TableBody>
       </Table>
-    </div>
+      </div>
   );
 };
 
