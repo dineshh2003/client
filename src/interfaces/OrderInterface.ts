@@ -1,17 +1,17 @@
 export interface FirestoreOrder {
     ID: string;
     Name: string;
-    email?: string;
-    createdAt: string;
-    updatedAt?: string;
+    Email?: string;
+    CreatedAt: string;
+    UpdatedAt?: string;
     cancelledAt?: string;
     closedAt?: string;
     processedAt: string;
     customer?: FirestoreCustomer;
     billingAddress?: FirestoreAddress;
-    shippingAddress?: FirestoreAddress;
+    ShippingAddress?: FirestoreAddress;
     currency: string;
-    totalPrice: string;
+    TotalPrice: string;
     subtotalPrice: string;
     totalDiscounts: string;
     totalLineItemsPrice: string;
@@ -19,7 +19,7 @@ export interface FirestoreOrder {
     totalTax: string;
     taxLines: FirestoreTaxLine[];
     totalWeight: number;
-    financialStatus: string;
+    FinancialStatus: string;
     fulfillments?: any;
     fulfillmentStatus?: string;
     token: string;

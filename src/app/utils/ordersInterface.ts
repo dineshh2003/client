@@ -2,11 +2,11 @@
   id?: string;
   name?: string;
   email?: string;
-  created_at?: string; // RFC3339 timestamp
-  updated_at?: string;
-  cancelled_at?: string;
-  closed_at?: string;
-  processed_at?: string;
+  created_at?: Date | string; // Date or RFC3339 timestamp as string
+  updated_at?: Date | string;
+  cancelled_at?: Date | string;
+  closed_at?: Date | string;
+  processed_at?: Date | string;
   customer?: FirestoreCustomer;
   billing_address?: FirestoreAddress;
   shipping_address?: FirestoreAddress;
