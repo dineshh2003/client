@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import AddressCard from '../utils/WarehouseCard'; // Assuming AddressCard is in the utils directory
-import WarehouseAddressForm from '../utils/WarehouseForm'; // Import the AddressForm component
-
+import AddressCard from '../utils/WarehouseCard'; 
+import WarehouseAddressForm from '../utils/WarehouseForm'; 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const staggerContainer = {
   hidden: { opacity: 1 },
@@ -129,31 +129,51 @@ const addresses: Address[] = [
     isDefault: false,
   },
 ];
+
+
 const Warehouse: React.FC = () => {
-  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [isAddingNew, setIsAddingNew] = useState(false);  // Manage form toggle
+  const [isBlurred, setIsBlurred] = useState(false);      // Manage blur effect
 
   const toggleForm = () => setIsAddingNew((prev) => !prev);
+  const toggleBlur = () => setIsBlurred((prev) => !prev);  // Toggle blur
+
+  const handleHome = () =>{
+      <Link href='/storeorders'/>
+  }
+
 
   return (
-    <div className="flex flex-col justify-center my-24 px-8 relative bg-neutral-900 h-[80vh] rounded-xl p-3">
+    <div
+      className= {`flex flex-col justify-center my-4 px-8 relative bg-[#292b35] h-[90vh] rounded-xl p-3 transition-all duration-300 ${
+        isBlurred ? 'blur-md' : 'blur-none'
+      }`}
+    >
       {!isAddingNew ? (
         <>
-          <div className="flex justify-between">
-            <h2 className="text-2xl font-bold">Pickup Address</h2>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={toggleForm}>
-              Add New
+          <div className="flex justify-between items-center mb-4">
+            <button>
+            <h2 className="text-2xl font-bold text-white" onClick={handleHome}>Pickup Address</h2>
             </button>
+            <div className="flex gap-4">
+              <button
+                className="bg-[#12121256] text-white px-4 py-2 rounded-lg"
+                onClick={toggleForm}
+              >
+                Add New
+              </button>
+            </div>
           </div>
 
           <motion.div
-            className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-scroll scrollbar-hide"
+            className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 overflow-scroll scrollbar-hide "
             variants={staggerContainer}
             initial="hidden"
             animate="show"
           >
             {addresses.map((address) => (
               <motion.div key={address.id} variants={cardVariants}>
-                <AddressCard key={address.id} address={address} />
+                <AddressCard address={address} />
               </motion.div>
             ))}
           </motion.div>

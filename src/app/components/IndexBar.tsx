@@ -10,14 +10,13 @@ const IndexBar = () => {
     <AppBar 
       position="relative" // Ensures it's placed below the Appbar and not overlapping
       sx={{ 
-        width: `calc(100% - 300px)`, 
-        ml: `300px`,
+        width: `calc(100%)`,
         bgcolor: '#121212',
         display : 'flex',
         justifyContent : 'right',
         fontFamily : 'sans-serif',
         paddingTop: '30px',
-        marginTop : '35px'
+        marginTop : '35px',
       }}
       elevation={0}
     >

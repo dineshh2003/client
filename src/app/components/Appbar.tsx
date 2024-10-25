@@ -13,7 +13,7 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
     <div className='w-auto bg-[#121212]'>
       <AppBar
         sx={{
-          width: `calc(100% - 300px)`,
+          width: `calc(100%)`, 
           ml: `300px`,
           bgcolor: '#121212',
           padding: '0.2rem 1rem',
