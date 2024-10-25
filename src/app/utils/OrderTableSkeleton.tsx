@@ -12,7 +12,7 @@ const OrderTableSkeleton: React.FC = () => {
             <Skeleton animation="wave" width={80} />
           </TableCell>
           <TableCell>
-            <Skeleton animation="wave" width={40} />
+            <Skeleton animation="wave" width={80} />
           </TableCell>
           <TableCell>
             <Skeleton animation="wave" width={60} />
@@ -21,7 +21,7 @@ const OrderTableSkeleton: React.FC = () => {
             <Skeleton animation="wave" width={120} />
           </TableCell>
           <TableCell>
-            <Skeleton animation="wave" width={30} />
+            <Skeleton animation="wave" width={60} />
           </TableCell>
           <TableCell>
             <Skeleton animation="wave" width={100} />
