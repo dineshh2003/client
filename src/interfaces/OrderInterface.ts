@@ -6,7 +6,7 @@ export interface FirestoreOrder {
     UpdatedAt?: string;
     cancelledAt?: string;
     closedAt?: string;
-    processedAt: string;
+    ProcessedAt: string;
     customer?: FirestoreCustomer;
     billingAddress?: FirestoreAddress;
     ShippingAddress?: FirestoreAddress;
