@@ -9,8 +9,6 @@ export default clerkMiddleware();
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isProtectedRoute = [
-    "/actionorders",
-
   ].some(route => pathname.startsWith(route));
 
   const userId = req.headers.get("x-clerk-user-id");

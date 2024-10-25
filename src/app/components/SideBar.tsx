@@ -1,119 +1,99 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import PaymentIcon from '@mui/icons-material/Payment';
 import { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { AssignmentReturnIcon, HomeIcon, LocalShippingIcon, MailIcon, StoreIcon } from '../utils/Icons';
+import Image from 'next/image';
+import { Button, Box, AppBar, Toolbar, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListItemButton } from '@mui/material';
+import StoreIcon from '@mui/icons-material/Store';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import FlightIcon from '@mui/icons-material/Flight';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import UndoIcon from '@mui/icons-material/Undo';
+import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
+import PaymentIcon from '@mui/icons-material/Payment';
+import { HomeIcon, MailIcon, AssignmentReturnIcon } from '../utils/Icons';
 import AuthButtons from './Authbutton';
 
 const drawerWidth = 300;
+const bgColor = '#121212'; // Dark background for drawer
+const selectedColor = '#50C878'; // Greenish text for selected item
+const hoverColor = '#333333'; // Hover background color
 
-export default function PermanentDrawerLeft() {
+const menuItems = [
+  { text: 'Home', icon: <HomeIcon />, route: '/' },
+  { text: 'Inbox', icon: <MailIcon />, route: '/inbox' },
+  { text: 'Store Order', icon: <StoreIcon />, route: '/storeorder' },
+  { text: 'Delivered', icon: <LocalShippingIcon />, route: '/delivered' },
+  { text: 'Reverse Order', icon: <AssignmentReturnIcon />, route: '/reverseorder' },
+  { text: 'Store Integration', icon: <AssignmentReturnIcon />, route: '/storeIntegration' },
+  { text: 'Billing', icon: <PaymentIcon />, route: '/billing' },
+];
+
+interface TrackBarProps {
+  onSync: () => void;
+}
+
+const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
-  const handleListItemClick = (index: number) => {
+  const handleListItemClick = (index: number, route: string) => {
     setSelectedIndex(index);
-    
-    // Navigate based on the selected index
-    switch(index) {
-      case 0: // Home
-        router.push('/'); // Adjust the path as needed
-        break;
-      case 1: // Inbox
-        router.push('/inbox'); // Adjust the path as needed
-        break;
-      case 2: // Store Order
-        router.push('/storeorder'); // Adjust the path as needed
-        break;
-      case 3: // Delivered
-        router.push('/delivered'); // Adjust the path as needed
-        break;
-      case 4: // Reverse Order
-        router.push('/reverseorder'); // Adjust the path as needed
-        break;
-      case 5: // Store Integration
-        router.push('/storeIntegration'); // Navigate to Store Integration
-        break;
-      case 6: // Billing
-        router.push('/billing'); // Adjust the path as needed
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleLogout = () => {
-    router.push('/api/auth/logout'); // Log out and redirect to auth logout
+    router.push(route);
   };
 
   return (
-    <Box sx={{ display: 'flex' , height : '100vh' , overflow: 'hidden'}}>
-      <CssBaseline />
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <Drawer
+        variant="permanent"
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
+          width: isSidebarExpanded ? drawerWidth : 80,
+          transition: 'width 0.3s ease',
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            backgroundColor: '#121212', // Dark background color
-            color: '#50C878', // Greenish text color
+            width: isSidebarExpanded ? drawerWidth : 60,
+            overflow: 'hidden',
+            backgroundColor: bgColor,
+            color: '#f5f5f5',
+            transition: 'width 0.3s ease',
           },
         }}
-        variant="permanent"
-        anchor="left"
+        onMouseEnter={() => setIsSidebarExpanded(true)}
+        onMouseLeave={() => setIsSidebarExpanded(false)}
       >
-        <Toolbar sx={{ justifyContent: '', paddingTop: '1.8rem' }}>
+        <Toolbar sx={{ justifyContent: 'center', padding: '1.8rem' }}>
           <Image src='/Group1.png' height={80} width={80} alt='Logo' />
         </Toolbar>
-        <Divider sx={{ paddingTop: '3.5rem', borderColor: '#333333' }} />
-        <List sx={{ flexGrow: 1, gap: '25px', display: 'flex', flexDirection: 'column', color: '#f5f5f5' , paddingLeft : '10px' }}>
-          {[
-            { text: 'Home', icon: <HomeIcon /> },
-            { text: 'Inbox', icon: <MailIcon /> },
-            { text: 'Store Order', icon: <StoreIcon /> },
-            { text: 'Delivered', icon: <LocalShippingIcon /> },
-            { text: 'Reverse Order', icon: <AssignmentReturnIcon /> },
-            { text: 'Store Integration', icon: <AssignmentReturnIcon /> },
-            { text: 'Billing', icon: <PaymentIcon /> },
-          ].map((item, index) => (
-            <ListItem key={item.text} disablePadding>
+        <Divider sx={{ borderColor: hoverColor }} />
+
+        <List sx={{ flexGrow: 1, color: '#f5f5f5', paddingLeft: '10px' }}>
+          {menuItems.map((item, index) => (
+            <ListItem key={item.text} disablePadding sx={{gap:'16px'}}>
               <ListItemButton
                 selected={selectedIndex === index}
-                onClick={() => handleListItemClick(index)}
+                onClick={() => handleListItemClick(index, item.route)}
                 sx={{
-                  '&:hover': {
-                    backgroundColor: '#333333',
-                  },
-                  color: selectedIndex === index ? '#50C878' : '#f5f5f5',
+                  '&:hover': { backgroundColor: hoverColor },
+                  color: selectedIndex === index ? selectedColor : '#f5f5f5',
                   fontFamily: 'sans-serif',
                 }}
               >
-                <ListItemIcon sx={{ color: selectedIndex === index ? '#50C878' : '#f5f5f5' }}>
+                <ListItemIcon sx={{ color: selectedIndex === index ? selectedColor : '#f5f5f5' }}>
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText primary={item.text} />
+                {isSidebarExpanded && <ListItemText primary={item.text} />}
               </ListItemButton>
             </ListItem>
           ))}
         </List>
+
         <Divider />
-        {/* Custom User Toolbar at the Bottom */}
         <Toolbar sx={{ justifyContent: 'center', marginTop: 'auto', paddingBottom: '1.8rem' }}>
-         <AuthButtons/>
+          <AuthButtons />
         </Toolbar>
       </Drawer>
     </Box>
   );
-}
+};
+
+export default TrackBar;

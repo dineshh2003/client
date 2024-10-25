@@ -8,92 +8,68 @@ interface AddressFormProps {
 const WarehouseAddressForm: React.FC<AddressFormProps> = ({ onCancel }) => {
   return (
     <motion.div
-      className="relative mt-6 flex flex-col justify-center items-center bg-neutral-800 text-white p-6 rounded-lg w-[75vw]"
+      className= " h-[80vh] flex flex-col justify-center items-center bg-[#22232a] text-white p-4 rounded-lg w-[75vw]"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeInOut' }}
-      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
     >
-      <h2 className="text-xl font-bold mb-4">Edit Pickup Address</h2>
-      
+      <h2 className="text-2xl font-poppins mb-4 text-gray-400">Edit Pickup Address</h2>
       <button onClick={onCancel} className="absolute top-2 right-2 text-white">
         ✕
       </button>
-      
-      
-      <form className="grid gap-4">
-        <div>
-          <label>Nickname *</label>
-          <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-        </div>
-        <div>
-          <label>Address Line 1 *</label>
-          <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-        </div>
-        <div>
-          <label>Address Line 2</label>
-          <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-        </div>
-        <div className="flex gap-4">
-          <div>
-            <label>Pincode *</label>
-            <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-          </div>
-          <div>
-            <label>State *</label>
-            <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div>
-            <label>City *</label>
-            <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-          </div>
-          <div>
-            <label>Phone</label>
-            <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div>
-            <label>Email</label>
-            <input type="email" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-          </div>
-          <div>
-            <label>Website URL</label>
-            <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
-          </div>
-        </div>
-        <div>
-          <label>GST No</label>
-          <input type="text" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
+
+      <form className="grid gap-4 w-full">
+        <div className="flex flex-col">
+          <label className="text-gray-400 text-sm mb-2">Nickname</label>
+          <input type="text" placeholder="Enter a nickname" className= "input-field p-5 bg-[#292b35] rounded-xl" />
         </div>
         
-        {/* Status Checkboxes */}
-        <div className="flex items-center gap-4">
-          <label>Status</label>
-          <input type="checkbox" />
-          <span>Default</span>
-          <input type="checkbox" />
-          <span>Active</span>
+        <div className="flex flex-col">
+          <label className="text-gray-400 text-sm mb-2">Address Line 1</label>
+          <input type="text" placeholder="Address Line 1" className= "input-field p-5 bg-[#292b35] rounded-xl"  />
         </div>
 
-        {/* RTO Address */}
-        <div className="flex items-center gap-4">
-          <label>RTO Address</label>
-          <input type="radio" name="rto" />
-          <span>Same as Pickup</span>
-          <input type="radio" name="rto" />
-          <span>Different RTO Address</span>
+        <div className="flex flex-col">
+          <label className="text-gray-400 text-sm mb-2">Address Line 2</label>
+          <input type="text" placeholder="Address Line 2" className= "input-field p-5 bg-[#292b35] rounded-xl"  />
         </div>
 
-        {/* Submit and Cancel Buttons */}
+        <div className="flex gap-4">
+          <div className="flex flex-col w-full">
+            <label className="text-gray-400 text-sm mb-2">Pincode</label>
+            <input type="text" placeholder="Pincode" className= "input-field p-5 bg-[#292b35] rounded-xl" />
+          </div>
+          <div className="flex flex-col w-full">
+            <label className="text-gray-400 text-sm mb-2">State</label>
+            <input type="text" placeholder="State" className= "input-field p-5 bg-[#292b35] rounded-xl" />
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <div className="flex flex-col w-full">
+            <label className="text-gray-400 text-sm mb-2">City</label>
+            <input type="text" placeholder="City" className= "input-field p-5 bg-[#292b35] rounded-xl"  />
+          </div>
+          <div className="flex flex-col w-full">
+            <label className="text-gray-400 text-sm mb-2">Phone</label>
+            <input type="text" placeholder="Phone" className= "input-field p-5 bg-[#292b35] rounded-xl" />
+          </div>
+        </div>
+
         <div className="flex justify-end gap-4">
-          <button type="button" className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={onCancel}>Cancel</button>
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg">Update</button>
+          <button
+            type="button"
+            className="bg-gray-500 px-4 py-2 rounded-lg hover:bg-gray-600"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="bg-[#292b35] px-4 py-2 rounded-lg hover:bg-gray-800">
+            Update
+          </button>
         </div>
       </form>
-      </motion.div>
+    </motion.div>
   );
 };
 

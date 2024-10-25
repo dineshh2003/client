@@ -1,129 +1,128 @@
-import { Cancel } from '@mui/icons-material'
-import React from 'react'
-import SplitButton from '../utils/ButtonGrp'
-import CompanyCard from './CompanyCard'
+import React from "react";
+import { FirestoreOrder } from "@/interfaces/OrderInterface";
+import { Cancel } from "@mui/icons-material";
+import CompanyCard from "../components/CompanyCard";
+import { Divider } from "@nextui-org/react";
 
-// Array of courier companies for mapping
+
+interface ActionProps {
+  order: FirestoreOrder;
+  onBack: () => void;
+}
+
 const companies = [
-  {
-    name: 'Delhivery',
-    rating: '4.8',
-    method: 'Surface',
-    cost: '134.10',
-    estDelivery: '13 Oct , 2024',
-    pickup: 'Tomorrow',
-    weight: '4-5 days'
-  },
-  {
-    name: 'Delhivery',
-    rating: '4.2',
-    method: 'Surface',
-    cost: '122.10',
-    estDelivery: '13 Oct , 2024',
-    pickup: 'Tomorrow',
-    weight: '4-5 days'
-  },
-  {
-    name: 'Blue Dart',
-    rating: '4.5',
-    method: 'Air',
-    cost: '156.10',
-    estDelivery: '13 Oct , 2024',
-    pickup: 'Tomorrow',
-    weight: '4-5 days'
-  },
-  {
-    name: 'Delhivery',
-    rating: '4.8',
-    method: 'Surface',
-    cost: '134.10',
-    estDelivery: '13 Oct , 2024',
-    pickup: 'Tomorrow',
-    weight: '4-5 days'
-  },
-  {
-    name: 'Delhivery',
-    rating: '4.2',
-    method: 'Surface',
-    cost: '122.10',
-    estDelivery: '13 Oct , 2024',
-    pickup: 'Tomorrow',
-    weight: '4-5 days'
-  },
-  {
-    name: 'Blue Dart',
-    rating: '4.5',
-    method: 'Air',
-    cost: '156.10',
-    estDelivery: '13 Oct , 2024',
-    pickup: 'Tomorrow',
-    weight: '4-5 days'
-  },
-  // Add the rest of the company details here from the image
+  { name: "Delhivery", rating: "4.8", method: "Surface", cost: "134.10", estDelivery: "13 Oct, 2024", pickup: "Tomorrow", weight: "4-5 days" },
+  { name: "Blue Dart", rating: "4.5", method: "Air", cost: "156.10", estDelivery: "13 Oct, 2024", pickup: "Tomorrow", weight: "4-5 days" },
+  { name: "Delhivery", rating: "4.8", method: "Surface", cost: "134.10", estDelivery: "13 Oct, 2024", pickup: "Tomorrow", weight: "4-5 days" },
+  { name: "Blue Dart", rating: "4.5", method: "Air", cost: "156.10", estDelivery: "13 Oct, 2024", pickup: "Tomorrow", weight: "4-5 days" },
+  { name: "Delhivery", rating: "4.8", method: "Surface", cost: "134.10", estDelivery: "13 Oct, 2024", pickup: "Tomorrow", weight: "4-5 days" },
+  { name: "Blue Dart", rating: "4.5", method: "Air", cost: "156.10", estDelivery: "13 Oct, 2024", pickup: "Tomorrow", weight: "4-5 days" },
 ];
 
-const Action = () => {
-  return (
-    <div className='container bg-[#292b35] flex flex-row h-[90vh] w-[80vw] px-8 border-2 rounded-xl border-[#42C195]'>
-        <div className='container flex flex-col mx-1 my-9 px-auto py-4 h-[70vh] w-[12vw]'>
-            <header className='text-4xl font-thin text-[#42C195]'>
-                <h1>Order Details</h1>
-            </header>
-            <div className='container font-normal mt-8'>
-                <h3 className='text-gray-400 text-lg'>Pickup from:</h3>
-                <h2 className='text-gray-100 text-xl'>751021, Sailashree Vihar</h2>
-            </div>
-            <div className='container font-normal mt-8'>
-                <h3 className='text-gray-400 text-lg'>Deliver To:</h3>
-                <h2 className='text-gray-100 text-xl'>751021, Sailashree Vihar</h2>
-            </div>
-            <div className='container font-normal mt-8'>
-                <h2 className='text-gray-100 text-xl'>$ 1500.95</h2>
-            </div>
-            <div className='container font-normal mt-8'>
-                <h3 className='text-gray-400 text-lg'>Payment Method</h3>
-                <h2 className='text-gray-100 text-xl'>COD</h2>
-            </div>
-            <div className='container font-normal mt-8'>
-                <h3 className='text-gray-400 text-lg'>Applicable Weight (in Kg)</h3>
-                <h2 className='text-gray-100 text-xl'>0.345 Kg</h2>
-            </div>
-        </div>
-        
-        <div className='divider bg-[#1d1f27] h-[80vh] my-auto w-0 border-2 border-[#303032] rounded-xl'>
-        </div>
-        
-        <div className='container flex flex-col mx-1 my-5 px-auto py-4 h-[80vh] w-[68vw]'>
-            <button className='flex justify-end rounded-full text-gray-400'>
-                <Cancel />
-            </button>
-            <div className='flex flex-col justify-start h-[10vh]'>
-                <h3 className='flex text-[#42C195] text-4xl mx-4 font-thin'>Select Courier Partner</h3>
-                <div className='flex justify-between mx-4 mt-4'>
-                    <h2 className='flex text-gray-300 text-xl'>0.345 Kg</h2>
-                    <div className='flex'>
-                        <SplitButton />
-                    </div>
-                </div>
-            </div>
 
-            <div className='Companies-Name grid grid-cols-3 gap-4 mt-8 mx-4 overflow-auto scrollbar-none'>
-                {companies.map((company, index) => (
-                    <CompanyCard
-                      key={index}
-                      name={company.name}
-                      rating={company.rating}
-                      method={company.method}
-                      cost={company.cost}
-                      estDelivery={company.estDelivery}
-                      pickup={company.pickup}
-                      weight={company.weight}
-                    />
-                ))}
-            </div>
-        </div>
+const Action: React.FC<ActionProps> = ({ order, onBack }) => {
+
+  return (
+    <div className="container h-full w-[50vw] flex flex-col py-6 bg-[#292b35] text-white rounded-lg ">
+      {/* Header with close button */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold text-white px-4">Order Details <h1>{order.ID}</h1></h1>
+        <button className="text-gray-400 hover:text-white px-4" onClick={onBack}>
+          <Cancel />
+        </button>
+      </div>
+
+    <Divider className="bg-gray-200 w-full h-[1px] my-4"/>
+    <div className="overflow-scroll scrollbar-hide">
+  {/* Address Container */}
+  <div className="address-container bg-[#292b35] p-6 rounded-lg mb-6">
+    <h2 className="text-xl font-medium mb-4 text-gray-300">Select Courier</h2>
+
+    <div className="grid grid-cols-2 gap-6">
+      {/* Pickup and Delivery */}
+      <div className="flex flex-col">
+        <label className="text-gray-400 text-sm mb-2">Pickup From</label>
+        <select className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300">
+          <option value={order?.ShippingAddress?.address1}>
+            {`tushar-${order?.ShippingAddress?.zip}`}
+          </option>
+        </select>
+      </div>
+      <div className="flex flex-col">
+        <label className="text-gray-400 text-sm mb-2">Deliver To</label>
+        <input
+          type="text"
+          value={`${order?.ShippingAddress?.country}, ${order?.ShippingAddress?.city}, ${order?.ShippingAddress?.phone}`}
+          className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
+          readOnly
+        />
+      </div>
+    </div>
+
+    {/* Order Value, Applied Weight, Dimensions */}
+    <div className="grid grid-cols-5 gap-4 mt-6">
+      <div className="flex flex-col col-span-2">
+        <label className="text-gray-400 text-sm mb-2">Order Value</label>
+        <input
+          type="text"
+          value={order?.TotalPrice || ""}
+          className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
+          readOnly
+        />
+      </div>
+      <div className="flex flex-col col-span-1">
+        <label className="text-gray-400 text-sm mb-2">Applied Weight</label>
+        <input
+          type="number"
+          value={order?.TotalWeight?.toFixed(3) || ""}
+          className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
+          readOnly
+        />
+      </div>
+      <div className="flex flex-col col-span-1">
+        <label className="text-gray-400 text-sm mb-2">Length (CM)</label>
+        <input
+          type="number"
+          value={order?.Dimensions?.Length || 0}
+          className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
+        />
+      </div>
+      <div className="flex flex-col col-span-1">
+        <label className="text-gray-400 text-sm mb-2">Width (CM)</label>
+        <input
+          type="number"
+          value={order?.Dimensions?.Width || 0}
+          className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
+        />
+      </div>
+      <div className="flex flex-col col-span-1">
+        <label className="text-gray-400 text-sm mb-2">Height (CM)</label>
+        <input
+          type="number"
+          value={order?.Dimensions?.Height || 0}
+          className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
+        />
+      </div>
+    </div>
+
+    {/* Volumetric Weight */}
+    <div className="flex justify-end mt-4">
+      <p className="text-gray-400 text-sm">Volumetric Weight:  kg</p>
+    </div>
+  </div>
+    <div className="bg-[#22232a] p-5 pb-6">
+        <h1 className='text-2xl py-2 my-4 '> 
+            Courier Services Available 
+        </h1>
+    <div className="grid grid-cols-3 gap-4">
+        {companies.map((company, index) => (
+          <CompanyCard key={index} {...company} />
+        ))}
+      </div>
+    </div>
+    </div>
     </div>
   );
-}
+};
 
 export default Action;
