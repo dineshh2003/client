@@ -1,36 +1,28 @@
-"use client"
+"use client";
 
 import type { Metadata } from "next";
 import "./globals.css";
-import 'primereact/resources/themes/saga-blue/theme.css'; // Or any other PrimeReact theme
+import 'primereact/resources/themes/saga-blue/theme.css'; 
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import { ClerkProvider } from '@clerk/nextjs';
-import {NextUIProvider} from "@nextui-org/react";
+import { NextUIProvider } from "@nextui-org/react";
 
-import { useEffect, useState } from "react";
+import { SessionProvider } from 'next-auth/react';
+
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Render nothing on the server, render children only after client-side mounting
-  if (!isMounted) {
-    return null;
-  }
-
   return (
-    <ClerkProvider>
-      <html lang="en">
+    <html lang="en">
+      <body>
         <NextUIProvider>
           <main className="dark text-foreground bg-background">
-          <body>{children}</body>
+            <SessionProvider>
+            {children}
+            </SessionProvider>
           </main>
         </NextUIProvider>
-      </html>
-    </ClerkProvider>
+      </body>
+    </html>
   );
 }

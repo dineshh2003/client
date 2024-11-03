@@ -1,9 +1,8 @@
-
+"use client"
 
 import { Button, Box, AppBar, Toolbar, IconButton } from '@mui/material';
-import { AddIcon, HelpIcon, NightIcon, RestartIcon, SettingIcon, WalletIcon } from '../utils/Icons';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
-import SettingApp from '../utils/SettingButton';
+import { AddIcon, HelpIcon, NightIcon, RestartIcon, SettingIcon, WalletIcon } from '../app/utils/Icons';
+import SettingApp from '../app/utils/SettingButton';
 interface AppbarProps {
   setView: (view: 'home' | 'warehouse') => void;
 }
@@ -67,9 +66,8 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
 
           {/* Right side buttons */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <IconButton sx={{ color: '#50C878' }}>
               <SettingApp setView={setView} /> {/* Pass setView here */}
-            </IconButton>
+            
             <IconButton sx={{ color: '#50C878' }}>
               <HelpIcon />
             </IconButton>
@@ -78,12 +76,12 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
             </IconButton>
 
             {/* Conditional Account/User Button */}
-            <SignedIn>
+            {/* <SignedIn>
               <UserButton />
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal" />
-            </SignedOut>
+            </SignedOut> */}
           </Box>
         </Toolbar>
       </AppBar>

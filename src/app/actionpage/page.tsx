@@ -1,7 +1,7 @@
 import React from "react";
 import { FirestoreOrder } from "@/interfaces/OrderInterface";
 import { Cancel } from "@mui/icons-material";
-import CompanyCard from "../components/CompanyCard";
+import CompanyCard from "../../components/CompanyCard";
 import { Divider } from "@nextui-org/react";
 
 

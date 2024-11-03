@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -5,14 +7,10 @@ import Image from 'next/image';
 import { Button, Box, AppBar, Toolbar, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListItemButton } from '@mui/material';
 import StoreIcon from '@mui/icons-material/Store';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import FlightIcon from '@mui/icons-material/Flight';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import UndoIcon from '@mui/icons-material/Undo';
-import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
 import PaymentIcon from '@mui/icons-material/Payment';
-import { HomeIcon, MailIcon, AssignmentReturnIcon } from '../utils/Icons';
-import AuthButtons from './Authbutton';
+import { HomeIcon, MailIcon, AssignmentReturnIcon } from '../app/utils/Icons';
+import { useSession } from 'next-auth/react';
+import { handleSignOut } from '@/app/actions/authActions';
 
 const drawerWidth = 300;
 const bgColor = '#121212'; // Dark background for drawer
@@ -42,6 +40,8 @@ const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
     setSelectedIndex(index);
     router.push(route);
   };
+
+  const {data : session} = useSession();
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -89,8 +89,10 @@ const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
 
         <Divider />
         <Toolbar sx={{ justifyContent: 'center', marginTop: 'auto', paddingBottom: '1.8rem' }}>
-          <AuthButtons />
-        </Toolbar>
+          <Button >
+            SignOut
+          </Button>
+          </Toolbar>
       </Drawer>
     </Box>
   );

@@ -1,6 +1,8 @@
+"use client"
+
 import React, { useState, useEffect } from 'react';
 import { Button, Box, AppBar, Toolbar, Divider, Typography } from '@mui/material';
-import { SyncIcon } from '../utils/Icons';
+import { SyncIcon } from '../app/utils/Icons';
 
 const TrackBar = ({ onSync }: { onSync: () => void }) => {
   const [lastSync, setLastSync] = useState<Date | null>(null);

@@ -2,8 +2,17 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+
 
 const StoreIntegrationPage: React.FC = () => {
+
+  // const {data : session} = useSession();
+
+  // if(!session?.user){
+  //   return <h1>access denied</h1>
+  // }
+
   const handleIntegrateStore = () => {
     // Redirect to backend route to handle Shopify OAuth flow
     window.location.href =

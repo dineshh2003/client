@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -10,6 +10,8 @@ import {
 import { Skeleton, Button } from "@mui/material";
 import { FirestoreOrder } from "@/interfaces/OrderInterface";
 import { format, subDays } from "date-fns";
+import { Session } from "next-auth";
+
 
 interface StoreOrderTableProps {
   orders?: FirestoreOrder[];
@@ -22,17 +24,19 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
   loading,
   onSelectOrder,
 }) => {
+
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState("all");
   const [customStartDate, setCustomStartDate] = useState("");
   const [customEndDate, setCustomEndDate] = useState("");
 
   const handleSearch = (order: FirestoreOrder) => {
+
     const matchesSearch =
       order.ID.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.Name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    let matchesDate = true; // Show all orders by default
+    let matchesDate = true;
     const createdAt = new Date(order.CreatedAt);
 
     if (dateRange !== "all") {
@@ -102,8 +106,8 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
       </div>
 
       <div className="pb-6">
-        <Table aria-label="Order Table" selectionMode="multiple" color="success">
-          <TableHeader className="bg-gray-600 text-white">
+        <Table aria-label="Order Table">
+          <TableHeader>
             <TableColumn>ORDER ID</TableColumn>
             <TableColumn>NAME</TableColumn>
             <TableColumn>EMAIL</TableColumn>
@@ -111,52 +115,53 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
             <TableColumn>TOTAL PRICE</TableColumn>
             <TableColumn>ACTION</TableColumn>
           </TableHeader>
-
           <TableBody>
-  {loading ? (
-    [...Array(10)].map((_, index) => (
-      <TableRow key={index}>
-        {[...Array(6)].map((_, idx) => (
-          <TableCell key={idx}>
-            <Skeleton animation="wave" width="100%" />
-          </TableCell>
-        ))}
-      </TableRow>
-    ))
-  ) : orders.filter(handleSearch).length === 0 ? (
-    <TableRow>
-      {/* Ensure this row has 6 cells to match column count */}
-      <TableCell colSpan={6} className="text-center py-4 text-white">
-        No orders found.
-      </TableCell>
-    </TableRow>
-  ) : (
-    orders.filter(handleSearch).map((order) => (
-      <TableRow key={order.ID}>
-        <TableCell>{order.ID}</TableCell>
-        <TableCell>{order.Name || "N/A"}</TableCell>
-        <TableCell>{order.Email || "Not Provided"}</TableCell>
-        <TableCell>
-          {order.CreatedAt
-            ? new Date(order.CreatedAt).toLocaleString()
-            : "N/A"}
-        </TableCell>
-        <TableCell>
-          {order.TotalPrice ||  "N/A"}
-        </TableCell>
-        <TableCell>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => onSelectOrder(order)}
-          >
-            View Details
-          </Button>
-        </TableCell>
-      </TableRow>
-    ))
-  )}
-</TableBody>
+            {loading ? (
+              [...Array(1)].map((_, index) => (
+                <TableRow key={index}>
+                  {[...Array(6)].map((_, idx) => (
+                    <TableCell key={idx}>
+                      <Skeleton animation="wave" width="100%" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : orders.filter(handleSearch).length === 0 ? (
+              <TableRow>
+                <TableCell>No orders found.</TableCell>
+                <TableCell>.</TableCell>
+                <TableCell>.</TableCell>
+                <TableCell>.</TableCell>
+                <TableCell>.</TableCell>
+                <TableCell>.</TableCell>
+              </TableRow>
+            ) : (
+              orders.filter(handleSearch).map((order) => (
+                <TableRow key={order.ID} className="text-gray-100">
+                  <TableCell>{order.ID || "N/A"}</TableCell>
+                  <TableCell>{order.Name || "N/A"}</TableCell>
+                  <TableCell>{order.Email || "Not Provided"}</TableCell>
+                  <TableCell>
+                    {order.CreatedAt
+                      ? new Date(order.CreatedAt).toLocaleString()
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    {order.TotalPrice || "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => onSelectOrder(order)}
+                    >
+                      View Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
         </Table>
       </div>
     </div>
