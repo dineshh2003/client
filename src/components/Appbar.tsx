@@ -1,42 +1,49 @@
-"use client"
+"use client";
 
-import { Button, Box, AppBar, Toolbar, IconButton } from '@mui/material';
-import { AddIcon, HelpIcon, NightIcon, RestartIcon, SettingIcon, WalletIcon } from '../app/utils/Icons';
-import SettingApp from '../app/utils/SettingButton';
+import React from "react";
+import { Button, Box, AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import {
+  AddIcon,
+  HelpIcon,
+  NightIcon,
+  RestartIcon,
+  SettingIcon,
+  WalletIcon,
+} from "../app/utils/Icons";
+import SettingApp from "../app/utils/SettingButton";
+
 interface AppbarProps {
-  setView: (view: 'home' | 'warehouse') => void;
+  setView: (view: "home" | "warehouse") => void;
 }
 
 export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
   return (
-    <div className='w-auto bg-[#121212]'>
+    <div className="w-auto">
       <AppBar
         sx={{
-          width: `calc(100%)`, 
-          ml: `300px`,
-          bgcolor: '#121212',
-          padding: '0.2rem 1rem',
-          borderTop: '1px solid #42C195',
-          borderRadius: '45px',
-          overflow: 'hidden',
-          position: 'absolute'
+          width: `calc(100%)`,
+          // ml: `300px`,
+          // padding: "0.05rem 0.5rem",
+          position: "absolute",
         }}
-        elevation={0}
+        className="bg-gray-900"
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          {/* Left side buttons */}
-          <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          {/* Left Section */}
+          <Box sx={{ display: "flex", gap: "1rem", alignItems: "center" }}>
             <Button
               variant="contained"
               sx={{
-                backgroundColor: '#42C195',
-                color: '#fff',
-                height: '48px',
-                fontSize: '1rem',
-                textTransform: 'none',
-                borderRadius: '15px',
-                padding: '0.5rem 1.5rem',
-                '&:hover': { backgroundColor: '#38B583' }
+                backgroundColor: "#42C195",
+                color: "#fff",
+                height: "40px",
+                fontSize: "1rem",
+                fontWeight: "600",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "0.5rem 1.5rem",
+                boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
+                "&:hover": { backgroundColor: "#38B583" },
               }}
               startIcon={<AddIcon />}
             >
@@ -46,42 +53,58 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
             <Button
               variant="contained"
               sx={{
-                backgroundColor: '#42C195',
-                color: '#fff',
-                height: '48px',
-                fontSize: '1rem',
-                textTransform: 'none',
-                borderRadius: '15px',
-                padding: '0.5rem 1.5rem',
-                '&:hover': { backgroundColor: '#38B583' },
-                display: 'flex',
-                gap: '12px',
+                backgroundColor: "#42C195",
+                color: "#fff",
+                height: "40px",
+                fontSize: "1rem",
+                fontWeight: "600",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "0.5rem 1.5rem",
+                display: "flex",
+                gap: "0.5rem",
+                alignItems: "center",
+                boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
+                "&:hover": { backgroundColor: "#38B583" },
               }}
               startIcon={<WalletIcon />}
             >
-              <h1>$1718.20</h1>
+              <Typography
+                sx={{
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  color: "#fff",
+                }}
+              >
+                $1718.20
+              </Typography>
               <RestartIcon />
             </Button>
           </Box>
 
-          {/* Right side buttons */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <SettingApp setView={setView} /> {/* Pass setView here */}
-            
-            <IconButton sx={{ color: '#50C878' }}>
+          {/* Right Section */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <SettingApp setView={setView} /> {/* Settings Dropdown */}
+
+            <IconButton
+              sx={{
+                color: "#50C878",
+                transition: "all 0.3s ease",
+                "&:hover": { transform: "scale(1.2)", color: "#42C195" },
+              }}
+            >
               <HelpIcon />
             </IconButton>
-            <IconButton sx={{ color: '#50C878' }}>
+
+            <IconButton
+              sx={{
+                color: "#50C878",
+                transition: "all 0.3s ease",
+                "&:hover": { transform: "scale(1.2)", color: "#42C195" },
+              }}
+            >
               <NightIcon />
             </IconButton>
-
-            {/* Conditional Account/User Button */}
-            {/* <SignedIn>
-              <UserButton />
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal" />
-            </SignedOut> */}
           </Box>
         </Toolbar>
       </AppBar>

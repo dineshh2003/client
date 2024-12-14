@@ -135,6 +135,9 @@ const signInHandler = () =>{
    router.push('/auth/signin')
 }
 
+const signupHandler = () =>{
+  router.push('/auth/signup')
+}
 
 
   useEffect(() => {
@@ -210,6 +213,11 @@ const signInHandler = () =>{
                   sign Out
                 </Button>
             )}
+             <div className="">
+                <Button variant="outline" className="ml-4" onClick={signupHandler}>
+                  Sign Up
+                </Button>
+              </div>
           </nav>
           <Button
             variant={isScrolled ? "outline" : "secondary"}

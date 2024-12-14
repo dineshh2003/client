@@ -10,14 +10,13 @@ const IndexBar = () => {
     <AppBar 
       position="relative" // Ensures it's placed below the Appbar and not overlapping
       sx={{ 
-        width: `calc(100%)`,
-        bgcolor: '#121212',
+        width : 'auto',
         display : 'flex',
         justifyContent : 'right',
         fontFamily : 'sans-serif',
-        paddingTop: '30px',
-        marginTop : '35px',
+        borderRadius: '18px 18px 0 0',
       }}
+      className='bg-gray-900 mt-16'
       elevation={0}
     >
       <Toolbar sx={{ justifyContent : 'right' }}>
@@ -113,7 +112,6 @@ const IndexBar = () => {
           >
             Bulk Update
           </Button>
-         <SplitButton/>
         </Box>
       </Toolbar>
     </AppBar>

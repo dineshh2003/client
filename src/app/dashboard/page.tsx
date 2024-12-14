@@ -13,10 +13,14 @@ import Action from "../../components/Action";
 import Warehouse from "../../components/Warehouse";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
+import { TodaysOrder } from "@/components/dashboard/Today-Order";
+import { SndOrderSummary } from "@/components/dashboard/Send-Order";
+import Analytics from "@/components/dashboard/Analytics";
 
 const StoreOrderTable = lazy(() => import("../../components/DataTable"));
 
-const OrdersPage = () => {
+const Page = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [viewOrder, setViewOrder] = useState<FirestoreOrder | null>(null);
@@ -25,6 +29,26 @@ const OrdersPage = () => {
   const [error, setError] = useState<string | null>(null);
   const key = "orders_quickstart-5091d5ef.myshopify.com";
   const [view, setView] = useState<'home' | 'warehouse'>('home');
+
+  const orderSummaryData = [
+    { status: "Pickup", prepaid: 0, cod: 145, total: 145 },
+    { status: "InTransit", prepaid: 1, cod: 3, total: 4 },
+    { status: "Delivered", prepaid: 0, cod: 0, total: 0 },
+    { status: "Lost", prepaid: 0, cod: 0, total: 0 },
+    { status: "Out For Delivery", prepaid: 0, cod: 0, total: 0 },
+    { status: "Undelivered", prepaid: 0, cod: 0, total: 0 },
+    { status: "RTO", prepaid: 0, cod: 0, total: 0 },
+    { status: "Others", prepaid: 0, cod: 0, total: 0 },
+  ]
+
+  const orderStats = {
+    pickup: 145,
+    inTransit: 302,
+    ofd: 48,
+    delivered: 46,
+    undelivered: 166,
+    rto: 44,
+  }
 
   // useEffect(() => {
   //   if (status === "unauthenticated") {
@@ -73,33 +97,47 @@ const OrdersPage = () => {
   const handleSwitchView = (newView: 'home' | 'warehouse') => setView(newView);
 
   return (
-    <Box sx={{ display: "flex", height: "100vh"}}
-    className='bg-slate-800'
+    <Box sx={{ display: "flex"}}
+    className='bg-slate-800, h-[100vh]'
     >
-      <PermanentDrawerLeft onSync={fetchOrders} />
+      <PermanentDrawerLeft onSync={fetchOrders} className="fixed"/>
+      <Appbar setView={handleSwitchView}/>
       <Box
         sx={{
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
+          overflow: "scroll",
           position: "relative",
           filter: viewOrder || view === 'warehouse' ? "blur(8px)" : "none",
+          paddingX: "4px"
         }}
+        className="h-[100vh]"
       >
-        <Appbar setView={handleSwitchView} />
         
-        <div className="p-4">
-        <IndexBar />
-        <TrackBar onSync={fetchOrders} />
-        <Suspense fallback={<OrderTableSkeleton />}>
-          <StoreOrderTable
-            orders={orders}
-            loading={loading}
-            onSelectOrder={handleSelectOrder}
-            />
-          </Suspense>
+        <div className= "mx-auto my-28 h-auto w-[90vw] ">
+        <div className="flex flex-col gap-5 ">
+            {/* Welcome Section */}
+            <div className="col-span-12 bg-gray-800 p-6 rounded-md shadow-md flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-bold">
+                  Welcome, <span className="text-blue-500">Dinesh Jangid</span> 👋
+                </h1>
+                <p className="text-gray-400">Grow your business like a hero</p>
+              </div>
+              <Image
+              src='/rocket.png'
+              height={75}
+              width={75}
+              alt=""
+              />  
+            </div>
+            <SndOrderSummary date="06-12-2024" data={orderSummaryData} />
+            <TodaysOrder date="06-12-2024" stats={orderStats} />
+            <Analytics/>
         </div>
+      </div>
+
       </Box>
 
       {/* Warehouse View */}
@@ -153,4 +191,4 @@ const OrdersPage = () => {
   );
 };
 
-export default OrdersPage;
+export default Page;

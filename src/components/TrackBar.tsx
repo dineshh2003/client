@@ -22,9 +22,10 @@ const TrackBar = ({ onSync }: { onSync: () => void }) => {
         position="relative"
         sx={{
           width: `calc(100%)`,
-          borderRadius: '18px 18px 0 0',
-          bgcolor: '#282A2F',
+          // borderRadius: '18px 18px 0 0',
+          // bgcolor: '#282A2F',
         }}
+        className='bg-gray-900'
         elevation={0}
       >
         <Toolbar sx={{ justifyContent: 'space-between', padding: '0.5rem 1rem' }}>

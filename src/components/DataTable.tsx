@@ -64,7 +64,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
   };
 
   return (
-    <div className="flex flex-col rounded-b-3xl px-4 bg-[#282A2F] text-black">
+    <div className="flex flex-col rounded-b-3xl px-4 bg-gray-900 text-black">
       <div className="search-container flex flex-row py-1 gap-4">
         <input
           className="bg-[#12121256] p-4 rounded-xl border border-[#3d3d3d] text-gray-300 mb-4 w-72"
@@ -80,7 +80,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
         >
           <option value="all">All Orders</option>
           <option value="24 hours">Last 24 Hours</option>
-          <option value="2 days">Last 2 Days</option>
+          <option value="2 days">Last 2 Days</option> 
           <option value="1 week">Last 1 Week</option>
           <option value="custom">Custom Range</option>
         </select>

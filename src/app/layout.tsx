@@ -6,8 +6,9 @@ import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import { NextUIProvider } from "@nextui-org/react";
-
 import { SessionProvider } from 'next-auth/react';
+import {ApolloProvider} from '@apollo/client'
+import ApolloProviderWrapper from "../components/ApolloProvider";
 
 
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+      <ApolloProviderWrapper>
         <NextUIProvider>
           <main className="dark text-foreground bg-background">
             <SessionProvider>
@@ -22,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SessionProvider>
           </main>
         </NextUIProvider>
+      </ApolloProviderWrapper>
       </body>
     </html>
   );

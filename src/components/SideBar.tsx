@@ -1,100 +1,154 @@
-"use client"
+"use client";
 
-import * as React from 'react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Button, Box, AppBar, Toolbar, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListItemButton } from '@mui/material';
-import StoreIcon from '@mui/icons-material/Store';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import PaymentIcon from '@mui/icons-material/Payment';
-import { HomeIcon, MailIcon, AssignmentReturnIcon } from '../app/utils/Icons';
-import { useSession } from 'next-auth/react';
-import { handleSignOut } from '@/app/actions/authActions';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Home,
+  Mail,
+  ShoppingBag,
+  Truck,
+  ArrowLeftRight,
+  Wallet,
+  ChevronDown,
+  ChevronRight,
+  Package,
+  AlertCircle,
+  Repeat,
+  Sun,
+  Scale,
+  Grid,
+} from "lucide-react"; // Replace with ShadCN-compatible icons
+import { Button } from "@/components/ui/button";
 
-const drawerWidth = 300;
-const bgColor = '#121212'; // Dark background for drawer
-const selectedColor = '#50C878'; // Greenish text for selected item
-const hoverColor = '#333333'; // Hover background color
+const bgColor = "#121212"; // Drawer background color
 
 const menuItems = [
-  { text: 'Home', icon: <HomeIcon />, route: '/' },
-  { text: 'Inbox', icon: <MailIcon />, route: '/inbox' },
-  { text: 'Store Order', icon: <StoreIcon />, route: '/storeorder' },
-  { text: 'Delivered', icon: <LocalShippingIcon />, route: '/delivered' },
-  { text: 'Reverse Order', icon: <AssignmentReturnIcon />, route: '/reverseorder' },
-  { text: 'Store Integration', icon: <AssignmentReturnIcon />, route: '/storeIntegration' },
-  { text: 'Billing', icon: <PaymentIcon />, route: '/billing' },
+  { text: "Home", icon: <Home />, route: "/dashboard" },
+  {
+    text: "Forward Order",
+    icon: <ShoppingBag />,
+    subItems: [
+      { text: "Create Order", route: "/createorder" },
+      { text: "Store Order", route: "/storeorders" },
+      { text: "Ready to Dispatch", route: "/ready-to-dispatch" },
+      { text: "Manifest", route: "/manifest" },
+      { text: "Intransit", route: "/intransit" },
+      { text: "Delivered", route: "/delivered" },
+      { text: "RTO", route: "/rto" },
+      { text: "All", route: "/all" },
+    ],
+  },
+  { text: "Reverse Order", icon: <ArrowLeftRight />, subItems: [
+    { text: "Create Order", route: "/createorder" },
+    { text: "Store Order", route: "/storeorders" },
+    { text: "Ready to Dispatch", route: "/ready-to-dispatch" },
+    { text: "Manifest", route: "/manifest" },
+    { text: "Intransit", route: "/intransit" },
+    { text: "Delivered", route: "/delivered" },
+    { text: "RTO", route: "/rto" },
+    { text: "All", route: "/all" },
+  ], },
+  { text: "Billing", icon: <Wallet />, route: "/billing" },
+  { text: "Forward Order", icon: <Package />, route: "/forward-order" },
+  { text: "Reverse Order", icon: <ArrowLeftRight />, route: "/reverse-order" },
+  { text: "NDR", icon: <AlertCircle />, route: "/ndr" },
+  { text: "Billing", icon: <Repeat />, route: "/billing" },
+  { text: "Post Shipping", icon: <Truck />, route: "/post-shipping" },
+  { text: "Insights", icon: <Sun />, route: "/insights" },
+  { text: "Weight Module", icon: <Scale />, route: "/weight-module" },
+  { text: "Store Integration", icon: <Grid />,  subItems: [
+    { text: "view store", route: "/viewstore" },
+    { text: "add store", route: "/addstore" },
+    {text  : "storeIntegrate" , route : "/storeIntegration"}
+]},
 ];
 
-interface TrackBarProps {
-  onSync: () => void;
-}
-
-const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
+const TrackBar: React.FC = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleListItemClick = (index: number, route: string) => {
-    setSelectedIndex(index);
+  const handleListItemClick = (route: string) => {
+    setSelectedIndex(route);
     router.push(route);
   };
 
-  const {data : session} = useSession();
+  const toggleSubMenu = (menu: string) => {
+    setExpandedMenu(expandedMenu === menu ? null : menu);
+  };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: isSidebarExpanded ? drawerWidth : 80,
-          transition: 'width 0.3s ease',
-          '& .MuiDrawer-paper': {
-            width: isSidebarExpanded ? drawerWidth : 60,
-            overflow: 'hidden',
-            backgroundColor: bgColor,
-            color: '#f5f5f5',
-            transition: 'width 0.3s ease',
-          },
-        }}
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <div
+        className={`${
+          isSidebarExpanded ? "w-72" : "w-20"
+        } bg-gray-900 text-white transition-all duration-300 flex flex-col`}
         onMouseEnter={() => setIsSidebarExpanded(true)}
         onMouseLeave={() => setIsSidebarExpanded(false)}
       >
-        <Toolbar sx={{ justifyContent: 'center', padding: '1.8rem' }}>
-          <Image src='/Group1.png' height={80} width={80} alt='Logo' />
-        </Toolbar>
-        <Divider sx={{ borderColor: hoverColor }} />
+        {/* Logo Section */}
+        <div className="flex items-center justify-center p-4">
+          <img
+            src="/path-to-logo.png" // Replace with the correct path to your logo
+            alt="Logo"
+            className={`${
+              isSidebarExpanded ? "w-20 h-20" : "w-12 h-12"
+            } transition-all duration-300`}
+          />
+        </div>
 
-        <List sx={{ flexGrow: 1, color: '#f5f5f5', paddingLeft: '10px' }}>
-          {menuItems.map((item, index) => (
-            <ListItem key={item.text} disablePadding sx={{gap:'16px'}}>
-              <ListItemButton
-                selected={selectedIndex === index}
-                onClick={() => handleListItemClick(index, item.route)}
-                sx={{
-                  '&:hover': { backgroundColor: hoverColor },
-                  color: selectedIndex === index ? selectedColor : '#f5f5f5',
-                  fontFamily: 'sans-serif',
-                }}
+        <nav className="flex-grow">
+          {menuItems.map((item) => (
+            <div key={item.text}>
+              <div
+                className={`flex items-center justify-between gap-4 p-3 cursor-pointer transition-colors duration-200 ${
+                  selectedIndex === item.route
+                    ? "bg-gray-800 text-green-400"
+                    : "text-gray-400 hover:bg-gray-800"
+                }`}
+                onClick={() =>
+                  item.subItems
+                    ? toggleSubMenu(item.text)
+                    : handleListItemClick(item.route!)
+                }
               >
-                <ListItemIcon sx={{ color: selectedIndex === index ? selectedColor : '#f5f5f5' }}>
-                  {item.icon}
-                </ListItemIcon>
-                {isSidebarExpanded && <ListItemText primary={item.text} />}
-              </ListItemButton>
-            </ListItem>
+                <div className="flex items-center gap-4">
+                  <div className="text-xl">{item.icon}</div>
+                  {isSidebarExpanded && <span>{item.text}</span>}
+                </div>
+                {isSidebarExpanded &&
+                  item.subItems &&
+                  (expandedMenu === item.text ? (
+                    <ChevronDown className="w-5 h-5" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5" />
+                  ))}
+              </div>
+              {/* Submenu */}
+              {isSidebarExpanded && expandedMenu === item.text && item.subItems && (
+                <div className="ml-8">
+                  {item.subItems.map((subItem) => (
+                    <div
+                      key={subItem.text}
+                      className={`flex items-center gap-4 p-2 cursor-pointer transition-colors duration-200 ${
+                        selectedIndex === subItem.route
+                          ? "bg-gray-800 text-green-400"
+                          : "text-gray-400 hover:bg-gray-800"
+                      }`}
+                      onClick={() => handleListItemClick(subItem.route)}
+                    >
+                      {isSidebarExpanded && <span>{subItem.text}</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
-        </List>
-
-        <Divider />
-        <Toolbar sx={{ justifyContent: 'center', marginTop: 'auto', paddingBottom: '1.8rem' }}>
-          <Button >
-            SignOut
-          </Button>
-          </Toolbar>
-      </Drawer>
-    </Box>
+        </nav>
+      </div>
+    </div>
   );
 };
 
