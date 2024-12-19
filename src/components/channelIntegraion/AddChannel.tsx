@@ -1,9 +1,10 @@
 'use client'
 
-import { Search, CheckCircle, Pencil } from 'lucide-react'
+import { useState } from 'react'
+import { Search, CheckCircle, Pencil, X } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
-import Link from 'next/link'
 import Image from 'next/image'
+import AddNewForm from './newForm'
 
 interface Store {
   id: string
@@ -34,9 +35,11 @@ const stores: Store[] = [
 ]
 
 export default function AddChannelIntegration() {
+  const [showForm, setShowForm] = useState(false)
+
   return (
-    <div className="h-screen bg-gray-800 text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="h-screen bg-gray-800 text-white p-8 relative">
+      <div className={`max-w-7xl mx-auto ${showForm ? 'blur-sm' : ''}`}>
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-semibold">Store</h1>
           
@@ -50,12 +53,12 @@ export default function AddChannelIntegration() {
               />
             </div>
             
-            <Link 
-              href="/channel-integration"
+            <button 
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              onClick={() => setShowForm(true)}
             >
               Add New
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -115,6 +118,11 @@ export default function AddChannelIntegration() {
           ))}
         </div>
       </div>
+      {showForm && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <AddNewForm onClose={() => setShowForm(false)} />
+        </div>
+      )}
     </div>
   )
 }

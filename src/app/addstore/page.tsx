@@ -99,8 +99,10 @@ const Page = () => {
           paddingX: "4px"
         }}
         className="h-[100vh]"
-      >
+      > 
+      <div className="mt-[5vh]">
         <AddChannelIntegration/>
+      </div>
       </Box>
 
       {/* Warehouse View */}
