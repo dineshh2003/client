@@ -16,15 +16,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <SessionProvider>
       <ApolloProviderWrapper>
         <NextUIProvider>
           <main className="dark text-foreground bg-background">
-            <SessionProvider>
             {children}
-            </SessionProvider>
           </main>
         </NextUIProvider>
       </ApolloProviderWrapper>
+          </SessionProvider>
       </body>
     </html>
   );

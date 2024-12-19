@@ -12,37 +12,67 @@ import OrderTableSkeleton from "../utils/OrderTableSkeleton";
 import Action from "../../components/Action";
 import Warehouse from "../../components/Warehouse";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from "next/navigation";
+import { gql, useMutation } from "@apollo/client";
 
 const StoreOrderTable = lazy(() => import("../../components/DataTable"));
+
+const EXCHANGE_ACCESS_TOKEN_MUTATION = gql`
+  mutation ExchangeAccessToken($shopName: String!, $code: String!, $accountId: String!) {
+    exchangeAccessToken(shopName: $shopName, code: $code, accountId: $accountId)
+  }
+`;
 
 const OrdersPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [viewOrder, setViewOrder] = useState<FirestoreOrder | null>(null);
   const [orders, setOrders] = useState<FirestoreOrder[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [shopName, setShopName] = useState<string | null>(null);
+  const [code, setCode] = useState<string | null>(null);
+  const [exchangeAccessToken] = useMutation(EXCHANGE_ACCESS_TOKEN_MUTATION);
   const key = "orders_quickstart-5091d5ef.myshopify.com";
   const [view, setView] = useState<'home' | 'warehouse'>('home');
 
-  // useEffect(() => {
-  //   if (status === "unauthenticated") {
-  //     router.refresh();
-  //   }
-  // }, [status, router]);
+  // Extract code and shop from URL
+  useEffect(() => {
+    console.log("Extracting query parameters...");
+    const extractedCode = searchParams.get("code");
+    const extractedShop = searchParams.get("shop");
 
-  //      // Render a loading state while checking the session or fetching data
-  //  if (status === "loading" || loading) {
-  //   return <Typography>Loading...</Typography>;
-  // }
+    if (extractedCode && extractedShop) {
+      console.log(`Code: ${extractedCode}, Shop: ${extractedShop}`);
+      setCode(extractedCode);
+      setShopName(extractedShop);
+    } else {
+      console.error("Missing code or shop in the URL parameters.");
+    }
+  }, [searchParams]);
 
-  // if (session) {
-  //   return <Typography variant="h4" color="error">Access Denied</Typography>;
-  // }
+  // Exchange access token after extracting code and shop name
+  useEffect(() => {
+    if (code && shopName) {
+      console.log("Exchanging access token...");
+      const accountId = "accountId456"; // Replace with the appropriate account ID logic
 
-    // Redirect if not authenticated
-
+      exchangeAccessToken({
+        variables: { shopName, code, accountId },
+      })
+        .then((response) => {
+          console.log("Access token exchanged successfully:", response.data);
+          // Redirect or perform further actions after successful token exchange
+        })
+        .catch((error) => {
+          console.error("Error exchanging access token:", error);
+        });
+    } else {
+      if (!code) console.error("Code is not available.");
+      if (!shopName) console.error("Shop name is not set.");
+    }
+  }, [code, shopName, exchangeAccessToken]);
 
   // Fetch orders only when the session is valid
   const fetchOrders = useCallback(async () => {
@@ -61,21 +91,15 @@ const OrdersPage = () => {
   }, [key]);
 
   useEffect(() => {
-      fetchOrders();
+    fetchOrders();
   }, [fetchOrders]);
-
-  // Render a loading state while checking the session or fetching dat
-
-
 
   const handleSelectOrder = (order: FirestoreOrder) => setViewOrder(order);
   const handleBackToOrders = () => setViewOrder(null);
   const handleSwitchView = (newView: 'home' | 'warehouse') => setView(newView);
 
   return (
-    <Box sx={{ display: "flex", height: "100vh"}}
-    className='bg-slate-800'
-    >
+    <Box sx={{ display: "flex", height: "100vh" }} className='bg-slate-800'>
       <PermanentDrawerLeft onSync={fetchOrders} />
       <Box
         sx={{
@@ -88,15 +112,14 @@ const OrdersPage = () => {
         }}
       >
         <Appbar setView={handleSwitchView} />
-        
         <div className="p-4">
-        <IndexBar />
-        <TrackBar onSync={fetchOrders} />
-        <Suspense fallback={<OrderTableSkeleton />}>
-          <StoreOrderTable
-            orders={orders}
-            loading={loading}
-            onSelectOrder={handleSelectOrder}
+          <IndexBar />
+          <TrackBar onSync={fetchOrders} />
+          <Suspense fallback={<OrderTableSkeleton />}>
+            <StoreOrderTable
+              orders={orders}
+              loading={loading}
+              onSelectOrder={handleSelectOrder}
             />
           </Suspense>
         </div>

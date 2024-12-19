@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Search, CheckCircle, Pencil, X } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
 import Image from 'next/image'
-import AddNewForm from './newForm'
+import AddNewForm from './NewForm'
 
 interface Store {
   id: string

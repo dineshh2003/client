@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
+import React, { useState, useEffect, useCallback, lazy } from "react";
 import { useSession } from "next-auth/react";
 import { Box, Typography } from "@mui/material";
 import { FirestoreOrder } from "@/interfaces/OrderInterface";
