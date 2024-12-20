@@ -5,8 +5,19 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import { useLazyQuery, gql } from '@apollo/client';
+
+// GraphQL Query for Signin
+const SIGNIN_QUERY = gql`
+  query Signin($email: String!, $password: String!) {
+    getAccountByID(email: $email, password: $password) {
+      id
+      name
+      email
+    }
+  }
+`;
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -14,24 +25,27 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  const [signin, { data, loading, error }] = useLazyQuery(SIGNIN_QUERY);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
+      const result = await signin({
+        variables: { email, password },
       });
 
-      if (result?.error) {
-        alert('Invalid email or password');
+      if (result?.data?.getAccountByID) {
+        const user = result.data.getAccountByID;
+        alert(`Welcome back, ${user.name}!`);
+        router.push('/dashboard'); // Redirect to the dashboard
       } else {
-        router.push('/dashboard');
+        alert('Invalid email or password.');
       }
     } catch (err) {
-      console.error(err);
+      console.error('Signin failed:', err);
+      alert('Failed to sign in. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +56,7 @@ export default function SignIn() {
       {/* Left Panel */}
       <div className="hidden md:flex flex-1 items-center justify-center bg-white">
         <div className="p-10">
-          <Image src="/login-bg-1.jpg" height={750} width={750} alt="" />
+          <Image src="/login-bg-1.jpg" height={750} width={750} alt="Background" />
         </div>
       </div>
 
@@ -52,7 +66,7 @@ export default function SignIn() {
           <CardContent className="flex flex-col items-center">
             {/* Logo */}
             <Image
-              src="/rocket.png" // Replace with your logo path
+              src="/rocket.png"
               alt="Logo"
               width={100}
               height={100}
@@ -118,9 +132,9 @@ export default function SignIn() {
               <Button
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2"
-                disabled={isLoading}
+                disabled={isLoading || loading}
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {isLoading || loading ? 'Signing in...' : 'Sign in'}
               </Button>
 
               {/* Google Login */}
@@ -128,14 +142,17 @@ export default function SignIn() {
                 type="button"
                 className="w-full border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center py-2"
               >
-                <Image
-                src="/google.png"
-                height={25}
-                width={25}
-                alt=''/>
+                <Image src="/google.png" height={25} width={25} alt="Google" />
                 Sign in with Google
               </Button>
             </form>
+
+            {/* Error Message */}
+            {error && (
+              <p className="text-red-500 text-sm mt-2">
+                Error: {error.message}
+              </p>
+            )}
 
             {/* Sign Up Link */}
             <p className="text-center text-sm text-gray-400 mt-4">
@@ -147,6 +164,6 @@ export default function SignIn() {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>
+  );
 }
