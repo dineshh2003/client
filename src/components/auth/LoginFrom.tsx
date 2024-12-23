@@ -1,55 +1,57 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { useLazyQuery, gql } from '@apollo/client';
 
-// GraphQL Query for Signin
-const SIGNIN_QUERY = gql`
-  query Signin($email: String!, $password: String!) {
-    getAccountByID(email: $email, password: $password) {
-      id
-      name
-      email
-    }
-  }
-`;
-
-export default function SignIn() {
+export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [signin, { data, loading, error }] = useLazyQuery(SIGNIN_QUERY);
+  // LoginForm.tsx
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  try {
+    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+    
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+      callbackUrl,
+    });
 
-    try {
-      const result = await signin({
-        variables: { email, password },
-      });
-
-      if (result?.data?.getAccountByID) {
-        const user = result.data.getAccountByID;
-        alert(`Welcome back, ${user.name}!`);
-        router.push('/dashboard'); // Redirect to the dashboard
-      } else {
-        alert('Invalid email or password.');
-      }
-    } catch (err) {
-      console.error('Signin failed:', err);
-      alert('Failed to sign in. Please try again.');
-    } finally {
-      setIsLoading(false);
+    if (!result) {
+      setError('Authentication failed');
+      return;
     }
-  };
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    if (result.ok) {
+      router.push(callbackUrl);
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    setError('An unexpected error occurred');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="flex h-screen">
@@ -132,9 +134,9 @@ export default function SignIn() {
               <Button
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2"
-                disabled={isLoading || loading}
+                disabled={isLoading}
               >
-                {isLoading || loading ? 'Signing in...' : 'Sign in'}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
 
               {/* Google Login */}
@@ -150,13 +152,13 @@ export default function SignIn() {
             {/* Error Message */}
             {error && (
               <p className="text-red-500 text-sm mt-2">
-                Error: {error.message}
+                Error: {error}
               </p>
             )}
 
             {/* Sign Up Link */}
             <p className="text-center text-sm text-gray-400 mt-4">
-              Don’t have an account?{' '}
+              Don't have an account?{' '}
               <a href="/signup" className="text-purple-400 hover:underline">
                 Sign up
               </a>
@@ -164,6 +166,7 @@ export default function SignIn() {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>
+  );
 }
+

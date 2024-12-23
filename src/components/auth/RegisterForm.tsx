@@ -1,55 +1,44 @@
 'use client';
 
 import { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { gql, useMutation } from '@apollo/client';
-import client from '@/apollo-client';
-import { ApolloProvider } from '@apollo/client';
+import { 
+    CREATE_ACCOUNT_MUTATION,
+    CreateAccountResponse,
+    CreateAccountVariables 
+  } from '@/graphql/mutations/createAccounts'
+  
 
-// GraphQL Mutation for Creating an Account
-const CREATE_ACCOUNT_MUTATION = gql`
-  mutation CreateAccount($name: String!, $email: String!, $password: String!) {
-    createAccount(Account: { name: $name, email: $email, password: $password }) {
-      id
-      name
-      email
-    }
-  }
-`;
-
-function SignUpForm() {
+export default function RegisterForm() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  const [createAccount] = useMutation(CREATE_ACCOUNT_MUTATION);
+  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setError('');
 
     try {
-      const { data } = await createAccount({
+      const result = await createAccount({
         variables: { name, email, password },
       });
 
-      if (data?.createAccount) {
-        alert(`Welcome ${data.createAccount.name}, Sign up successful!`);
-        router.push('/signin'); // Redirect to the SignIn page after successful signup
-      } else {
-        alert('Signup failed, please try again.');
+      if (result.data?.createAccount) {
+        // Successful account creation
+        router.push('/login');
       }
     } catch (error) {
-      console.error('Error signing up:', error);
-      alert('Failed to sign up. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setError('An error occurred during registration');
+      console.error('Registration error:', error);
     }
   };
 
@@ -119,13 +108,18 @@ function SignUpForm() {
                 />
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <p className="text-red-500 text-sm">{error}</p>
+              )}
+
               {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2"
-                disabled={isLoading}
+                disabled={loading}
               >
-                {isLoading ? 'Creating account...' : 'Sign up'}
+                {loading ? 'Creating account...' : 'Sign up'}
               </Button>
             </form>
 
@@ -143,10 +137,3 @@ function SignUpForm() {
   );
 }
 
-export default function SignUp() {
-  return (
-    <ApolloProvider client={client}>
-      <SignUpForm />
-    </ApolloProvider>
-  );
-}
