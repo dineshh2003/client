@@ -1,4 +1,8 @@
-import React, { useState , useEffect } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 import {
   Table,
   TableHeader,
@@ -8,30 +12,97 @@ import {
   TableCell,
 } from "@nextui-org/react";
 import { Skeleton, Button } from "@mui/material";
-import { FirestoreOrder } from "@/interfaces/OrderInterface";
 import { format, subDays } from "date-fns";
-import { Session } from "next-auth";
 
+// GraphQL query definition
+const GET_ORDERS = gql`
+  query GetOrders($accountId: String!, $pagination: OrderPaginationInput) {
+    getOrdersForAccount(accountId: $accountId, pagination: $pagination) {
+      edges {
+        node {
+          id
+          name
+          totalPrice
+          createdAt
+        }
+      }
+      pageInfo {
+        currentPage
+        totalPages
+      }
+      totalCount
+    }
+  }
+`;
+
+// Types
+interface FirestoreOrder {
+  ID: string;
+  Name: string;
+  Email: string;
+  CreatedAt: string;
+  TotalPrice: number;
+}
+
+interface OrderNode {
+  id: string;
+  name: string;
+  totalPrice: number;
+  createdAt: string;
+}
+
+interface PageInfo {
+  currentPage: number;
+  totalPages: number;
+}
+
+interface OrdersResponse {
+  getOrdersForAccount: {
+    edges: { node: OrderNode }[];
+    pageInfo: PageInfo;
+    totalCount: number;
+  };
+}
 
 interface StoreOrderTableProps {
-  orders?: FirestoreOrder[];
-  loading: boolean;
+  accountId: string;
   onSelectOrder: (order: FirestoreOrder) => void;
 }
 
 const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
-  orders = [],
-  loading,
+  accountId,
   onSelectOrder,
 }) => {
-
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState("all");
   const [customStartDate, setCustomStartDate] = useState("");
   const [customEndDate, setCustomEndDate] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  // GraphQL query hook
+  const { loading, error, data } = useQuery<OrdersResponse>(GET_ORDERS, {
+    variables: {
+      accountId,
+      pagination: {
+        page,
+        pageSize,
+      },
+    },
+  });
+
+  // Transform GraphQL response to FirestoreOrder format
+  const orders: FirestoreOrder[] = data?.getOrdersForAccount.edges.map(
+    ({ node }) => ({
+      ID: node.id,
+      Name: node.name,
+      TotalPrice: node.totalPrice,
+      CreatedAt: node.createdAt,
+      Email: "Not Available", // Default value since not in query
+    })
+  ) || [];
 
   const handleSearch = (order: FirestoreOrder) => {
-
     const matchesSearch =
       order.ID.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.Name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -63,8 +134,15 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
     return matchesSearch && matchesDate;
   };
 
+  if (error) {
+    return (
+      <div className="text-red-500 p-4">Error loading orders: {error.message}</div>
+    );
+  }
+
   return (
     <div className="flex flex-col rounded-b-3xl px-4 bg-gray-900 text-black">
+      {/* Search and Filter Controls */}
       <div className="search-container flex flex-row py-1 gap-4">
         <input
           className="bg-[#12121256] p-4 rounded-xl border border-[#3d3d3d] text-gray-300 mb-4 w-72"
@@ -80,7 +158,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
         >
           <option value="all">All Orders</option>
           <option value="24 hours">Last 24 Hours</option>
-          <option value="2 days">Last 2 Days</option> 
+          <option value="2 days">Last 2 Days</option>
           <option value="1 week">Last 1 Week</option>
           <option value="custom">Custom Range</option>
         </select>
@@ -105,6 +183,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
         )}
       </div>
 
+      {/* Table */}
       <div className="pb-6">
         <Table aria-label="Order Table">
           <TableHeader>
@@ -117,7 +196,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
           </TableHeader>
           <TableBody>
             {loading ? (
-              [...Array(1)].map((_, index) => (
+              [...Array(5)].map((_, index) => (
                 <TableRow key={index}>
                   {[...Array(6)].map((_, idx) => (
                     <TableCell key={idx}>
@@ -147,7 +226,9 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
                       : "N/A"}
                   </TableCell>
                   <TableCell>
-                    {order.TotalPrice || "N/A"}
+                    {typeof order.TotalPrice === "number"
+                      ? `$${order.TotalPrice.toFixed(2)}`
+                      : "N/A"}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -163,6 +244,32 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
             )}
           </TableBody>
         </Table>
+
+        {/* Pagination Controls */}
+        {data?.getOrdersForAccount.pageInfo && (
+          <div className="flex justify-end mt-4 gap-2 text-gray-300">
+            <Button
+              variant="contained"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="bg-blue-600"
+            >
+              Previous
+            </Button>
+            <span className="px-4 py-2">
+              Page {data.getOrdersForAccount.pageInfo.currentPage} of{" "}
+              {data.getOrdersForAccount.pageInfo.totalPages}
+            </span>
+            <Button
+              variant="contained"
+              disabled={page === data.getOrdersForAccount.pageInfo.totalPages}
+              onClick={() => setPage(page + 1)}
+              className="bg-blue-600"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

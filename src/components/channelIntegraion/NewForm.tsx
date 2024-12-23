@@ -13,17 +13,12 @@ const INTEGRATE_SHOP_MUTATION = gql`
   }
 `;
 
-const EXCHANGE_ACCESS_TOKEN_MUTATION = gql`
-  mutation ExchangeAccessToken($shopName: String!, $code: String!, $accountId: String!) {
-    exchangeAccessToken(shopName: $shopName, code: $code, accountId: $accountId)
-  }
-`;
+
 
 export default function AddNewForm({ onClose }: AddNewFormProps) {
   const [shopName, setShopName] = useState('');
   const [code, setCode] = useState<string | null>(null);
   const [integrateShop, { loading, error }] = useMutation(INTEGRATE_SHOP_MUTATION);
-  const [exchangeAccessToken] = useMutation(EXCHANGE_ACCESS_TOKEN_MUTATION);
   const searchParams = useSearchParams();
 
   // Extract "code" from the URL after component mounts
@@ -47,44 +42,6 @@ export default function AddNewForm({ onClose }: AddNewFormProps) {
       console.error('GraphQL Error during integrateShop:', err);
     }
   };
-
-  useEffect(() => {
-    console.log('Extracting "code" from URL...');
-    const extractedCode = searchParams.get('code');
-    if (extractedCode) {
-      console.log(`Code found in URL: ${extractedCode}`);
-      setCode(extractedCode);
-    } else {
-      console.log('No code found in URL.');
-    }
-  }, [searchParams]);
-
-
-  // Exchange access token after extracting the code and shop name
-  useEffect(() => {
-    if (code && shopName) {
-      console.log(`Attempting to exchange access token with code: ${code} and shopName: ${shopName}`);
-      const accountId = 'accountId456'; // Replace with actual account ID logic
-      exchangeAccessToken({
-        variables: { shopName, code, accountId },
-      })
-        .then(response => {
-          console.log('Response from exchangeAccessToken:', response);
-          if (response.data?.exchangeAccessToken) {
-            console.log('Access token exchanged successfully!');
-          } else {
-            console.error('Failed to exchange access token.');
-          }
-        })
-        .catch(error => {
-          console.error('Error in exchanging access token:', error);
-        });
-    } else {
-      if (!code) console.log('Code is not available for exchanging access token.');
-      if (!shopName) console.log('Shop name is not set for exchanging access token.');
-    }
-  }, [code, shopName, exchangeAccessToken]);
-
 
 
 

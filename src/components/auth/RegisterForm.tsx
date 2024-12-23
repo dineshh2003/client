@@ -1,39 +1,44 @@
 'use client';
 
 import { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import { 
+    CREATE_ACCOUNT_MUTATION,
+    CreateAccountResponse,
+    CreateAccountVariables 
+  } from '@/graphql/mutations/createAccounts'
+  
 
-export default function SignIn() {
+export default function RegisterForm() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
+
+  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setError('');
 
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
+      const result = await createAccount({
+        variables: { name, email, password },
       });
 
-      if (result?.error) {
-        alert('Invalid email or password');
-      } else {
-        router.push('/dashboard');
+      if (result.data?.createAccount) {
+        // Successful account creation
+        router.push('/login');
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      setError('An error occurred during registration');
+      console.error('Registration error:', error);
     }
   };
 
@@ -42,7 +47,7 @@ export default function SignIn() {
       {/* Left Panel */}
       <div className="hidden md:flex flex-1 items-center justify-center bg-white">
         <div className="p-10">
-          <Image src="/login-bg-1.jpg" height={750} width={750} alt="" />
+          <Image src="/login-bg-1.jpg" height={750} width={750} alt="Background" />
         </div>
       </div>
 
@@ -50,25 +55,31 @@ export default function SignIn() {
       <div className="flex flex-1 flex-col justify-center items-center font-roboto bg-purple-100 p-8">
         <Card className="w-full max-w-md p-6 bg-slate-900">
           <CardContent className="flex flex-col items-center">
-            {/* Logo */}
-            <Image
-              src="/rocket.png" // Replace with your logo path
-              alt="Logo"
-              width={100}
-              height={100}
-              className="mb-6"
-            />
-
-            <h2 className="text-2xl font-bold text-center text-white mb-4">Welcome back</h2>
-            <p className="text-sm text-center text-gray-400 mb-6">
-              Please enter your details
-            </p>
+            <Image src="/rocket.png" alt="Logo" width={100} height={100} className="mb-6" />
+            <h2 className="text-2xl font-bold text-center text-white mb-4">Create an Account</h2>
+            <p className="text-sm text-center text-gray-400 mb-6">Please enter your details</p>
 
             <form onSubmit={handleSubmit} className="space-y-6 w-full">
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-white">
+                  Full Name
+                </label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Enter your full name"
+                  className="mt-1 w-full p-4"
+                />
+              </div>
+
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-white">
-                  Email address
+                  Email Address
                 </label>
                 <Input
                   id="email"
@@ -97,51 +108,26 @@ export default function SignIn() {
                 />
               </div>
 
-              {/* Remember Me */}
-              <div className="flex justify-between items-center text-gray-400">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="remember"
-                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember" className="ml-2 text-sm">
-                    Remember for 30 days
-                  </label>
-                </div>
-                <a href="#" className="text-sm text-purple-400 hover:underline">
-                  Forgot password?
-                </a>
-              </div>
+              {/* Error Message */}
+              {error && (
+                <p className="text-red-500 text-sm">{error}</p>
+              )}
 
-              {/* Sign In Button */}
+              {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2"
-                disabled={isLoading}
+                disabled={loading}
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
-              </Button>
-
-              {/* Google Login */}
-              <Button
-                type="button"
-                className="w-full border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center py-2"
-              >
-                <Image
-                src="/google.png"
-                height={25}
-                width={25}
-                alt=''/>
-                Sign in with Google
+                {loading ? 'Creating account...' : 'Sign up'}
               </Button>
             </form>
 
-            {/* Sign Up Link */}
+            {/* Sign In Link */}
             <p className="text-center text-sm text-gray-400 mt-4">
-              Don’t have an account?{' '}
-              <a href="/signup" className="text-purple-400 hover:underline">
-                Sign up
+              Already have an account?{' '}
+              <a href="/signin" className="text-purple-400 hover:underline">
+                Sign in
               </a>
             </p>
           </CardContent>
@@ -150,3 +136,4 @@ export default function SignIn() {
     </div>
   );
 }
+

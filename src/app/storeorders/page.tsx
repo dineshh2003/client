@@ -117,8 +117,7 @@ const OrdersPage = () => {
           <TrackBar onSync={fetchOrders} />
           <Suspense fallback={<OrderTableSkeleton />}>
             <StoreOrderTable
-              orders={orders}
-              loading={loading}
+              accountId="accountId456"
               onSelectOrder={handleSelectOrder}
             />
           </Suspense>
