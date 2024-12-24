@@ -1,10 +1,14 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Box, AppBar, Toolbar, Divider, Typography } from '@mui/material';
-import { SyncIcon } from '../app/utils/Icons';
+import { SyncIcon } from '../utils/Icons';
 
-const TrackBar = ({ onSync }: { onSync: () => void }) => {
+interface TrackBarProps {
+  onSync: () => void;
+}
+
+const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
   const [lastSync, setLastSync] = useState<Date | null>(null);
 
   const handleRefresh = () => {
@@ -22,8 +26,6 @@ const TrackBar = ({ onSync }: { onSync: () => void }) => {
         position="relative"
         sx={{
           width: `calc(100%)`,
-          // borderRadius: '18px 18px 0 0',
-          // bgcolor: '#282A2F',
         }}
         className='bg-gray-900'
         elevation={0}

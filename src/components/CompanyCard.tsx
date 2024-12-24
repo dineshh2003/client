@@ -1,6 +1,6 @@
 import { Info } from '@mui/icons-material';
 import React from 'react';
-import { TruckLoadIcon } from '../app/utils/Icons';
+import { TruckLoadIcon } from '../utils/Icons';
 
 // Define the types for the props
 interface CompanyCardProps {

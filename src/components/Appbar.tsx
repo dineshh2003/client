@@ -1,113 +1,117 @@
-"use client";
+'use client'
 
-import React from "react";
-import { Button, Box, AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import React from "react"
+import Image from "next/image"
+import { signOut } from "next-auth/react"
 import {
-  AddIcon,
-  HelpIcon,
-  NightIcon,
-  RestartIcon,
-  SettingIcon,
-  WalletIcon,
-} from "../app/utils/Icons";
-import SettingApp from "../app/utils/SettingButton";
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Box,
+  Tooltip,
+} from "@mui/material"
+import AddIcon from "@mui/icons-material/Add"
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet"
+import RefreshIcon from "@mui/icons-material/Refresh"
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
+import Brightness4Icon from "@mui/icons-material/Brightness4"
+import LogoutIcon from "@mui/icons-material/Logout"
+import SettingApp from "./SettingApp"
+import { toast } from "sonner"
 
 interface AppbarProps {
-  setView: (view: "home" | "warehouse") => void;
+  setView: (view: "home" | "warehouse") => void
 }
 
 export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
+  const handleSignOut = async () => {
+    try {
+      await signOut({
+        callbackUrl: "/login",
+        redirect: true,
+      })
+      toast.success("Signed out successfully")
+    } catch (error) {
+      toast.error("Failed to sign out")
+      console.error("Sign out error:", error)
+    }
+  }
+
   return (
-    <div className="w-auto">
-      <AppBar
-        sx={{
-          width: `calc(100%)`,
-          // ml: `300px`,
-          // padding: "0.05rem 0.5rem",
-          position: "absolute",
-        }}
-        className="bg-gray-900"
-      >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          {/* Left Section */}
-          <Box sx={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#42C195",
-                color: "#fff",
-                height: "40px",
-                fontSize: "1rem",
-                fontWeight: "600",
-                textTransform: "none",
-                borderRadius: "12px",
-                padding: "0.5rem 1.5rem",
-                boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
-                "&:hover": { backgroundColor: "#38B583" },
-              }}
-              startIcon={<AddIcon />}
-            >
-              Create Order
-            </Button>
+    <AppBar
+      position="static"
+      sx={{
+        backgroundColor: "#111827",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <Toolbar sx={{ justifyContent: "space-between", py: 1 }}>
+        {/* Logo Section */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Image
+            src="/rocket.png"
+            alt="Logo"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
 
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#42C195",
-                color: "#fff",
-                height: "40px",
-                fontSize: "1rem",
-                fontWeight: "600",
-                textTransform: "none",
-                borderRadius: "12px",
-                padding: "0.5rem 1.5rem",
-                display: "flex",
-                gap: "0.5rem",
-                alignItems: "center",
-                boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
-                "&:hover": { backgroundColor: "#38B583" },
-              }}
-              startIcon={<WalletIcon />}
+        {/* Center Section */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              backgroundColor: "#42C195",
+              color: "white",
+              fontWeight: 600,
+              borderRadius: 2,
+              textTransform: "none",
+              "&:hover": { backgroundColor: "#38B583" },
+            }}
             >
-              <Typography
-                sx={{
-                  fontSize: "1.2rem",
-                  fontWeight: "bold",
-                  color: "#fff",
-                }}
-              >
-                $1718.20
-              </Typography>
-              <RestartIcon />
-            </Button>
-          </Box>
-
-          {/* Right Section */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <SettingApp setView={setView} /> {/* Settings Dropdown */}
-
-            <IconButton
-              sx={{
-                color: "#50C878",
-                transition: "all 0.3s ease",
-                "&:hover": { transform: "scale(1.2)", color: "#42C195" },
-              }}
-            >
-              <HelpIcon />
+            Create Order
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AccountBalanceWalletIcon />}
+            endIcon={<RefreshIcon />}
+            sx={{
+              backgroundColor: "#50C878",
+              color: "white",
+              fontWeight: 600,
+              borderRadius: 2,
+              textTransform: "none",
+              "&:hover": { backgroundColor: "#45B36B" },
+            }}
+          >
+            $1,718.20
+          </Button>
+        </Box>
+      </Box>
+        {/* Right Section */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <SettingApp setView={setView} />
+          <Tooltip title="Help">
+            <IconButton color="primary">
+              <HelpOutlineIcon />
             </IconButton>
-
-            <IconButton
-              sx={{
-                color: "#50C878",
-                transition: "all 0.3s ease",
-                "&:hover": { transform: "scale(1.2)", color: "#42C195" },
-              }}
-            >
-              <NightIcon />
+          </Tooltip>
+          <Tooltip title="Toggle Dark Mode">
+            <IconButton color="primary">
+              <Brightness4Icon />
             </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
-};
+          </Tooltip>
+          <Tooltip title="Sign Out">
+            <IconButton color="error" onClick={handleSignOut}>
+              <LogoutIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  )
+}
+

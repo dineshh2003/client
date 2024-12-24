@@ -8,7 +8,7 @@ import PermanentDrawerLeft from "@/components/SideBar";
 import { Appbar } from "../../components/Appbar";
 import IndexBar from "../../components/IndexBar";
 import TrackBar from "../../components/TrackBar";
-import OrderTableSkeleton from "../utils/OrderTableSkeleton";
+import OrderTableSkeleton from "../../utils/OrderTableSkeleton";
 import Action from "../../components/Action";
 import Warehouse from "../../components/Warehouse";
 import { motion, AnimatePresence } from "framer-motion";

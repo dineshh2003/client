@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Button, Box, AppBar, Toolbar } from '@mui/material';
-import { SearchIcon , CalenderIcon , CentralizedNetworkIcon, FilterIcon, Storeicon} from '../app/utils/Icons';
-import SplitButton from '../app/utils/ButtonGrp';
+import { SearchIcon , CalenderIcon , CentralizedNetworkIcon, FilterIcon, Storeicon} from '../utils/Icons';
+import SplitButton from '../utils/ButtonGrp';
 
 const ModifyBar = () => {
   return (

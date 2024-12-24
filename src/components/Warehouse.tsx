@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import AddressCard from '../app/utils/WarehouseCard'; 
-import WarehouseAddressForm from '../app/utils/WarehouseForm'; 
+import AddressCard from '../utils/WarehouseCard'; 
+import WarehouseAddressForm from '../utils/WarehouseForm'; 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 

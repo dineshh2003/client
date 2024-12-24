@@ -63,7 +63,7 @@ const menuItems = [
 ]},
 ];
 
-const TrackBar: React.FC = () => {
+const FixedSideBar: React.FC = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
@@ -79,7 +79,7 @@ const TrackBar: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-scroll scrollbar-hide">
       {/* Sidebar */}
       <div
         className={`${
@@ -152,4 +152,4 @@ const TrackBar: React.FC = () => {
   );
 };
 
-export default TrackBar;
+export default FixedSideBar;

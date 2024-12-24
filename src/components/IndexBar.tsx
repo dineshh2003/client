@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Button, Box, AppBar, Toolbar } from '@mui/material';
-import { LoveIcon, ExportIcon, UploadIcon, BoxIcon, TruckLoadIcon } from '../app/utils/Icons';
-import SplitButton from '../app/utils/ButtonGrp';
+import { LoveIcon, ExportIcon, UploadIcon, BoxIcon, TruckLoadIcon } from '../utils/Icons';
+import SplitButton from '../utils/ButtonGrp';
 
 const IndexBar = () => {
   return (

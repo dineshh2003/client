@@ -1,5 +1,5 @@
 import React from 'react'
-import { CircleIcon } from '../app/utils/Icons' // Assuming you have this icon available
+import { CircleIcon } from '../utils/Icons' // Assuming you have this icon available
 
 const ProgressBar = () => {
   return (
