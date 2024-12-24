@@ -26,6 +26,7 @@ const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
         position="relative"
         sx={{
           width: `calc(100%)`,
+          backgroundColor: "#111827",
         }}
         className='bg-gray-900'
         elevation={0}

@@ -15,6 +15,7 @@ const IndexBar = () => {
         justifyContent : 'right',
         fontFamily : 'sans-serif',
         borderRadius: '18px 18px 0 0',
+        backgroundColor: "#111827"
       }}
       className='bg-gray-900 mt-16'
       elevation={0}

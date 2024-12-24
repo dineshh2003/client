@@ -12,7 +12,7 @@ const ModifyBar = () => {
       sx={{ 
         width: '100%',
         // Matches the lower border of TrackBar
-        bgcolor: '#282A2F', // Matches the lower border
+        bgcolor: '# backgroundColor: "#111827",', // Matches the lower border
       }}
       elevation={0}
     >

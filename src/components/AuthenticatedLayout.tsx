@@ -31,7 +31,8 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     '/weight-module',
     '/store-integration',
     '/addstore',
-    '/settings'
+    '/settings',
+    '/viewstore'
   ];
 
   // Check if current route is an authenticated route
