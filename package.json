@@ -29,6 +29,7 @@
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.2",
     "@shadcn/ui": "^0.0.4",
     "@shopify/shopify-api": "^11.5.0",
     "@types/next-auth": "^3.15.0",

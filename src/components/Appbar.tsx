@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from "react"
 import React from "react"
 import Image from "next/image"
 import { signOut } from "next-auth/react"
@@ -20,10 +21,32 @@ import Brightness4Icon from "@mui/icons-material/Brightness4"
 import LogoutIcon from "@mui/icons-material/Logout"
 import SettingApp from "./SettingApp"
 import { toast } from "sonner"
+import RechargeWalletModal from "./RechargeWalletModal"
+import { useQuery } from "@apollo/client"
+import { gql } from "@apollo/client"
+import { useRouter } from "next/navigation"
 
 interface AppbarProps {
   setView: (view: "home" | "warehouse") => void
 }
+
+const GET_WALLET_DETAILS = gql`
+  query GetWalletDetails($input: GetWalletDetailsInput!) {
+    getWalletDetails(input: $input) {
+      walletDetails {
+        accountId
+        balance
+        currency
+        status
+        lastUpdated
+      }
+      errors {
+        code
+        message
+      }
+    }
+  }
+`
 
 export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
   const handleSignOut = async () => {
@@ -37,6 +60,43 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
       toast.error("Failed to sign out")
       console.error("Sign out error:", error)
     }
+  }
+
+  const [open, setOpen] = useState(false)
+  const [walletDetails, setWalletDetails] = useState<any>(null)
+  const router = useRouter()
+  const accountId = "1" // Replace with dynamic account ID if available
+
+  const { data, loading, error, refetch } = useQuery(GET_WALLET_DETAILS, {
+    variables: { input: { accountId } },
+    fetchPolicy: "cache-and-network",
+  })
+
+  useEffect(() => {
+    if (data?.getWalletDetails?.walletDetails) {
+      setWalletDetails(data.getWalletDetails.walletDetails)
+    }
+  }, [data])
+
+  const refreshWalletDetails = async () => {
+    try {
+      const { data: updatedData } = await refetch()
+      if (updatedData?.getWalletDetails?.walletDetails) {
+        setWalletDetails(updatedData.getWalletDetails.walletDetails)
+      }
+    } catch (err) {
+      console.error("Error fetching wallet details:", err)
+    }
+  }
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => {
+    setOpen(false)
+    refreshWalletDetails()
+  }
+
+  const navigateToCreateOrder = () => {
+    router.push("/createorder")
   }
 
   return (
@@ -58,39 +118,56 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
             className="rounded-full"
           />
 
-        {/* Center Section */}
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              backgroundColor: "#42C195",
-              color: "white",
-              fontWeight: 600,
-              borderRadius: 2,
-              textTransform: "none",
-              "&:hover": { backgroundColor: "#38B583" },
-            }}
+          {/* Center Section */}
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={navigateToCreateOrder}
+              sx={{
+                backgroundColor: "#42C195",
+                color: "white",
+                fontWeight: 600,
+                borderRadius: 2,
+                textTransform: "none",
+                "&:hover": { backgroundColor: "#38B583" },
+              }}
             >
-            Create Order
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<AccountBalanceWalletIcon />}
-            endIcon={<RefreshIcon />}
-            sx={{
-              backgroundColor: "#50C878",
-              color: "white",
-              fontWeight: 600,
-              borderRadius: 2,
-              textTransform: "none",
-              "&:hover": { backgroundColor: "#45B36B" },
-            }}
-          >
-            $1,718.20
-          </Button>
+              Create Order
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<AccountBalanceWalletIcon />}
+              onClick={handleOpen}
+              sx={{
+                backgroundColor: "#42C195",
+                color: "white",
+                fontWeight: 600,
+                borderRadius: 2,
+                textTransform: "none",
+                "&:hover": { backgroundColor: "#38B583" },
+              }}
+            >
+              Recharge Wallet
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<AccountBalanceWalletIcon />}
+              endIcon={<RefreshIcon onClick={refreshWalletDetails} />}
+              sx={{
+                backgroundColor: "#50C878",
+                color: "white",
+                fontWeight: 600,
+                borderRadius: 2,
+                textTransform: "none",
+                "&:hover": { backgroundColor: "#45B36B" },
+              }}
+            >
+              {loading ? "Loading..." : walletDetails ? `$${walletDetails.balance}` : "N/A"}
+            </Button>
+          </Box>
         </Box>
-      </Box>
+
         {/* Right Section */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <SettingApp setView={setView} />
@@ -111,7 +188,9 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
           </Tooltip>
         </Box>
       </Toolbar>
+
+      {/* Recharge Wallet Modal */}
+      <RechargeWalletModal open={open} handleClose={handleClose} />
     </AppBar>
   )
 }
-

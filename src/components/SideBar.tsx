@@ -17,6 +17,7 @@ import {
   Sun,
   Scale,
   Grid,
+  Settings
 } from "lucide-react"; // Replace with ShadCN-compatible icons
 import { Button } from "@/components/ui/button";
 
@@ -61,6 +62,13 @@ const menuItems = [
     { text: "add store", route: "/addstore" },
     {text  : "storeIntegrate" , route : "/storeIntegration"}
 ]},
+{
+  text: "Settings", icon: <Settings/>, subItems: [
+    { text: "bank", route: "/settings/bank" },
+    { text: "company", route: "/settings/bank" },
+    { text: "bank", route: "/settings/bank" },
+  ]
+},
 ];
 
 const FixedSideBar: React.FC = () => {
