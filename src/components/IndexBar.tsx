@@ -1,122 +1,59 @@
 "use client"
 
-import React from 'react';
-import { Button, Box, AppBar, Toolbar } from '@mui/material';
-import { LoveIcon, ExportIcon, UploadIcon, BoxIcon, TruckLoadIcon } from '../utils/Icons';
-import SplitButton from '../utils/ButtonGrp';
+import React from 'react'
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Truck, Heart, FileOutputIcon as FileExport, Upload, Package, ChevronDown } from 'lucide-react'
 
 const IndexBar = () => {
   return (
-    <AppBar 
-      position="relative" // Ensures it's placed below the Appbar and not overlapping
-      sx={{ 
-        width : 'auto',
-        display : 'flex',
-        justifyContent : 'right',
-        fontFamily : 'sans-serif',
-        borderRadius: '18px 18px 0 0',
-        backgroundColor: "#111827"
-      }}
-      className='bg-gray-900 mt-16'
-      elevation={0}
-    >
-      <Toolbar sx={{ justifyContent : 'right' }}>
-        <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Button 
-            variant="contained" 
-            sx={{
-              backgroundColor: '#121212',
-              color: '#fff', 
-              height: '37px',
-              fontSize: '0.9rem',
-              textTransform: 'none',
-               fontFamily : 'sans-serif',
-              borderRadius: '10px', // Rounded corners
-              padding: '0.5rem 1.5rem',
-              '&:hover': { backgroundColor: '#38B583' }
-            }}
-            startIcon={<TruckLoadIcon />}
-          >
-            All Orders
-          </Button>
-        </Box>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Button 
-            variant="contained" 
-            sx={{
-              backgroundColor: '#121212',
-              color: '#fff',
-              height: '37px',
-              fontSize: '1rem',
-              textTransform: 'none',
-              borderRadius: '10px',
-              padding: '0.5rem 1.5rem',
-              '&:hover': { backgroundColor: '#38B583' },
-              display: 'flex',
-              gap: '3px',
-            }}
-            startIcon={<LoveIcon />}
-          >
-          </Button>
-          <Button 
-            variant="contained" 
-            sx={{
-              backgroundColor: '#121212',
-              color: '#fff',
-              height: '37px',
-              fontSize: '1rem',
-              textTransform: 'none',
-              borderRadius: '10px',
-              padding: '0.5rem 1.5rem',
-              '&:hover': { backgroundColor: '#38B583' },
-              display: 'flex',
-              gap: '3px',
-            }}
-            startIcon={<ExportIcon />}
-          >
-            Export
-          </Button>
-          <Button 
-            variant="contained" 
-            sx={{
-              backgroundColor: '#121212',
-              color: '#fff',
-              height: '37px',
-              fontSize: '1rem',
-              textTransform: 'none',
-              borderRadius: '10px',
-              padding: '0.5rem 1.5rem',
-              '&:hover': { backgroundColor: '#38B583' },
-              display: 'flex',
-              gap: '3px',
-            }}
-            startIcon={<UploadIcon />}
-          >
-            Bulk Upload
-          </Button>
-          <Button 
-            variant="contained" 
-            sx={{
-              backgroundColor: '#121212',
-              color: '#fff',
-              height: '37px',
-              fontSize: '1rem',
-              textTransform: 'none',
-              borderRadius: '10px',
-              padding: '0.5rem 1.5rem',
-              '&:hover': { backgroundColor: '#38B583' },
-              display: 'flex',
-              gap: '3px',
-            }}
-            startIcon={<BoxIcon />}
-          >
-            Bulk Update
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
+    <div className="bg-gray-900 mt-16 rounded-t-xl p-4 flex justify-between items-center">
+      <Button variant="secondary" className="font-semibold text-white bg-gray-800 hover:bg-gray-700">
+        <Truck className="mr-2 h-4 w-4" />
+        All Orders
+      </Button>
+      
+      <div className="flex space-x-2">
+        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
+          <Heart className="h-4 w-4" />
+        </Button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" className="bg-gray-800 hover:bg-gray-700 text-white">
+              <FileExport className="mr-2 h-4 w-4" />
+              Export
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 bg-gray-800 text-white border-gray-700">
+            <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
+              Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
+              Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        <Button variant="secondary" className="bg-gray-800 hover:bg-gray-700 text-white">
+          <Upload className="mr-2 h-4 w-4" />
+          Bulk Upload
+        </Button>
+        
+        <Button variant="secondary" className="bg-gray-800 hover:bg-gray-700 text-white">
+          <Package className="mr-2 h-4 w-4" />
+          Bulk Update
+        </Button>
+      </div>
+    </div>
+  )
 }
 
-export default IndexBar;
+export default IndexBar
+
