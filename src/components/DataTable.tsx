@@ -16,7 +16,14 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format, subDays } from "date-fns"
+import ActionMenu from "./ActionMenu"
+import Action from "./Action"
 import { Skeleton } from "@/components/ui/skeleton"
+import { motion, AnimatePresence } from "framer-motion"
+
+
+
+
 
 // GraphQL query definition
 const GET_ORDERS = gql`
@@ -24,10 +31,24 @@ const GET_ORDERS = gql`
     getOrdersForAccount(accountId: $accountId, pagination: $pagination) {
       edges {
         node {
-          id
+         id
           name
-          totalPrice
           createdAt
+          updatedAt
+          cancelledAt
+          closedAt
+          processedAt
+          currency
+          totalPrice
+          subtotalPrice
+          totalDiscounts
+          totalTax
+          taxesIncluded
+          financialStatus
+          fulfillmentStatus
+          orderNumber
+          shopName
+          accountId
         }
       }
       pageInfo {
@@ -43,16 +64,44 @@ const GET_ORDERS = gql`
 interface FirestoreOrder {
   ID: string
   Name: string
-  Email: string
   CreatedAt: string
+  UpdatedAt: string
+  CancelledAt: string | null
+  ClosedAt: string | null
+  ProcessedAt: string
+  Currency: string
   TotalPrice: number
+  SubtotalPrice: number
+  TotalDiscounts: number
+  TotalTax: number
+  TaxesIncluded: boolean
+  FinancialStatus: string
+  FulfillmentStatus: string
+  OrderNumber: number
+  ShopName: string
+  AccountId: string
 }
 
 interface OrderNode {
   id: string
   name: string
-  totalPrice: number
   createdAt: string
+  updatedAt: string
+  cancelledAt: string | null
+  closedAt: string | null
+  processedAt: string
+  currency: string
+  totalPrice: number
+  subtotalPrice: number
+  totalDiscounts: number
+  totalTax: number
+  taxesIncluded: boolean
+  financialStatus: string
+  fulfillmentStatus: string
+  orderNumber: number
+  shopName: string
+  accountId: string
+  
 }
 
 interface PageInfo {
@@ -84,6 +133,19 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [selectedOrders, setSelectedOrders] = useState<string[]>([])
+  const [showShipNow, setShowShipNow] = useState(false)
+  const [selectedActionOrder, setSelectedActionOrder] = useState<FirestoreOrder | null>(null)
+
+  const handleShipNow = (order: FirestoreOrder) => {
+    setSelectedActionOrder(order)
+    setShowShipNow(true)
+  }
+
+  const handleViewDetails = (order: FirestoreOrder) => {
+    onSelectOrder(order)
+  }
+  
+
 
   const { loading, error, data } = useQuery<OrdersResponse>(GET_ORDERS, {
     variables: {
@@ -100,11 +162,25 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
     ({ node }) => ({
       ID: node.id,
       Name: node.name,
-      TotalPrice: node.totalPrice,
       CreatedAt: node.createdAt,
-      Email: "Not Available",
+      UpdatedAt: node.updatedAt,
+      CancelledAt: node.cancelledAt,
+      ClosedAt: node.closedAt,
+      ProcessedAt: node.processedAt,
+      Currency: node.currency,
+      TotalPrice: node.totalPrice,
+      SubtotalPrice: node.subtotalPrice,
+      TotalDiscounts: node.totalDiscounts,
+      TotalTax: node.totalTax,
+      TaxesIncluded: node.taxesIncluded,
+      FinancialStatus: node.financialStatus,
+      FulfillmentStatus: node.fulfillmentStatus,
+      OrderNumber: node.orderNumber,
+      ShopName: node.shopName,
+      AccountId: node.accountId,
     })
   ) || []
+
 
   const handleSearch = (order: FirestoreOrder) => {
     const matchesSearch =
@@ -154,6 +230,12 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
     }
   }
 
+
+
+
+
+
+
   if (error) {
     return (
       <div className="text-red-500 p-4">
@@ -163,6 +245,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
   }
 
   return (
+    <>
     <div className="flex flex-col rounded-b-3xl px-4 bg-gray-900">
       {/* Search and Filter Controls */}
       <div className="flex flex-wrap gap-4 py-4">
@@ -208,7 +291,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
       <div className="relative overflow-auto max-h-[600px] scrollbar-hide">
         <div className="min-w-[1000px]">
           <Table>
-            <TableHeader className="sticky top-0 bg-gray-900 z-10">
+            <TableHeader className="sticky rounded-lg p-2 top-0 bg-gray-800 z-10">
               <TableRow className="border-gray-800 hover:bg-gray-800">
                 <TableHead className="w-[50px] text-gray-400">
                   <Checkbox
@@ -220,9 +303,22 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
                 </TableHead>
                 <TableHead className="text-gray-400">ORDER ID</TableHead>
                 <TableHead className="text-gray-400">NAME</TableHead>
-                <TableHead className="text-gray-400">EMAIL</TableHead>
                 <TableHead className="text-gray-400">CREATED AT</TableHead>
+                <TableHead className="text-gray-400">UPDATED AT</TableHead>
+                <TableHead className="text-gray-400">CANCELLED AT</TableHead>
+                <TableHead className="text-gray-400">CLOSED AT</TableHead>
+                <TableHead className="text-gray-400">PROCESSED AT</TableHead>
+                <TableHead className="text-gray-400">CURRENCY</TableHead>
                 <TableHead className="text-gray-400">TOTAL PRICE</TableHead>
+                <TableHead className="text-gray-400">SUBTOTAL PRICE</TableHead>
+                <TableHead className="text-gray-400">TOTAL DISCOUNTS</TableHead>
+                <TableHead className="text-gray-400">TOTAL TAX</TableHead>
+                <TableHead className="text-gray-400">TAXES INCLUDED</TableHead>
+                <TableHead className="text-gray-400">FINANCIAL STATUS</TableHead>
+                <TableHead className="text-gray-400">FULFILLMENT STATUS</TableHead>
+                <TableHead className="text-gray-400">ORDER NUMBER</TableHead>
+                <TableHead className="text-gray-400">SHOP NAME</TableHead>
+                <TableHead className="text-gray-400">ACCOUNT ID</TableHead>
                 <TableHead className="text-gray-400">ACTION</TableHead>
               </TableRow>
             </TableHeader>
@@ -230,7 +326,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
               {loading ? (
                 [...Array(5)].map((_, index) => (
                   <TableRow key={index} className="border-gray-800">
-                    {[...Array(7)].map((_, idx) => (
+                    {[...Array(40)].map((_, idx) => (
                       <TableCell key={idx}>
                         <Skeleton className="h-4 w-full bg-gray-800" />
                       </TableCell>
@@ -239,7 +335,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
                 ))
               ) : orders.filter(handleSearch).length === 0 ? (
                 <TableRow className="border-gray-800">
-                  <TableCell colSpan={7} className="text-center text-gray-400">
+                  <TableCell colSpan={40} className="text-center text-gray-400">
                     No orders found.
                   </TableCell>
                 </TableRow>
@@ -254,33 +350,30 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
                         className="border-gray-600"
                       />
                     </TableCell>
-                    <TableCell className="text-blue-400 font-medium">
-                      {order.ID || "N/A"}
-                    </TableCell>
-                    <TableCell className="text-gray-100">
-                      {order.Name || "N/A"}
-                    </TableCell>
-                    <TableCell className="text-gray-100">
-                      {order.Email || "Not Provided"}
-                    </TableCell>
-                    <TableCell className="text-gray-100">
-                      {order.CreatedAt
-                        ? new Date(order.CreatedAt).toLocaleString()
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell className="text-gray-100">
-                      {typeof order.TotalPrice === "number"
-                        ? `$${order.TotalPrice.toFixed(2)}`
-                        : "N/A"}
-                    </TableCell>
+                    <TableCell className="text-gray-400">{order.ID}</TableCell>
+        <TableCell className="text-gray-400">{order.Name}</TableCell>
+        <TableCell className="text-gray-400">{order.CreatedAt}</TableCell>
+        <TableCell className="text-gray-400">{order.UpdatedAt}</TableCell>
+        <TableCell className="text-gray-400">{order.CancelledAt}</TableCell>
+        <TableCell className="text-gray-400">{order.ClosedAt}</TableCell>
+        <TableCell className="text-gray-400">{order.ProcessedAt}</TableCell>
+        <TableCell className="text-gray-400">{order.Currency}</TableCell>
+        <TableCell className="text-gray-400">{order.TotalPrice}</TableCell>
+        <TableCell className="text-gray-400">{order.SubtotalPrice}</TableCell>
+        <TableCell className="text-gray-400">{order.TotalDiscounts}</TableCell>
+        <TableCell className="text-gray-400">{order.TotalTax}</TableCell>
+        <TableCell className="text-gray-400">{order.TaxesIncluded ? 'Yes' : 'No'}</TableCell>
+        <TableCell className="text-gray-400">{order.FinancialStatus}</TableCell>
+        <TableCell className="text-gray-400">{order.FulfillmentStatus}</TableCell>
+        <TableCell className="text-gray-400">{order.OrderNumber}</TableCell>
+        <TableCell className="text-gray-400">{order.ShopName}</TableCell>
+        <TableCell className="text-gray-400">{order.AccountId}</TableCell>
+
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        className="text-blue-400 hover:text-blue-300 hover:bg-gray-800"
-                        onClick={() => onSelectOrder(order)}
-                      >
-                        View Details
-                      </Button>
+                    <ActionMenu
+            onShipNow={() => handleShipNow(order)}
+            onViewDetails={() => handleViewDetails(order)}
+          />
                     </TableCell>
                   </TableRow>
                 ))
@@ -321,8 +414,18 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
         </div>
       )}
     </div>
+
+<AnimatePresence>
+{showShipNow && selectedActionOrder && (
+  <Action
+    order={selectedActionOrder}
+    onBack={() => setShowShipNow(false)}
+  />
+)}
+</AnimatePresence>
+</>
+
   )
 }
 
 export default StoreOrderTable
-

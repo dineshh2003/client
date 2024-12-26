@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
-import React from "react"
-import Image from "next/image"
-import { signOut } from "next-auth/react"
+import { useState, useEffect } from "react";
+import React from "react";
+import Image from "next/image";
+import { signOut } from "next-auth/react";
 import {
   AppBar,
   Toolbar,
@@ -12,22 +12,24 @@ import {
   IconButton,
   Box,
   Tooltip,
-} from "@mui/material"
-import AddIcon from "@mui/icons-material/Add"
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet"
-import RefreshIcon from "@mui/icons-material/Refresh"
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
-import Brightness4Icon from "@mui/icons-material/Brightness4"
-import LogoutIcon from "@mui/icons-material/Logout"
-import SettingApp from "./SettingApp"
-import { toast } from "sonner"
-import RechargeWalletModal from "./RechargeWalletModal"
-import { useQuery } from "@apollo/client"
-import { gql } from "@apollo/client"
-import { useRouter } from "next/navigation"
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import LogoutIcon from "@mui/icons-material/Logout";
+import SettingApp from "./SettingApp";
+import { toast } from "sonner";
+import RechargeWalletModal from "./RechargeWalletModal";
+import { useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes"; // Import for theme toggle functionality
 
 interface AppbarProps {
-  setView: (view: "home" | "warehouse") => void
+  setView: (view: "home" | "warehouse") => void;
 }
 
 const GET_WALLET_DETAILS = gql`
@@ -46,58 +48,59 @@ const GET_WALLET_DETAILS = gql`
       }
     }
   }
-`
+`;
 
 export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
+  const { theme, setTheme } = useTheme(); // Theme hook for toggling
   const handleSignOut = async () => {
     try {
       await signOut({
         callbackUrl: "/login",
         redirect: true,
-      })
-      toast.success("Signed out successfully")
+      });
+      toast.success("Signed out successfully");
     } catch (error) {
-      toast.error("Failed to sign out")
-      console.error("Sign out error:", error)
+      toast.error("Failed to sign out");
+      console.error("Sign out error:", error);
     }
-  }
+  };
 
-  const [open, setOpen] = useState(false)
-  const [walletDetails, setWalletDetails] = useState<any>(null)
-  const router = useRouter()
-  const accountId = "1" // Replace with dynamic account ID if available
+  const [open, setOpen] = useState(false);
+  const [walletDetails, setWalletDetails] = useState<any>(null);
+  const router = useRouter();
+  const accountId = "1"; // Replace with dynamic account ID if available
 
   const { data, loading, error, refetch } = useQuery(GET_WALLET_DETAILS, {
     variables: { input: { accountId } },
     fetchPolicy: "cache-and-network",
-  })
+  });
 
   useEffect(() => {
     if (data?.getWalletDetails?.walletDetails) {
-      setWalletDetails(data.getWalletDetails.walletDetails)
+      setWalletDetails(data.getWalletDetails.walletDetails);
     }
-  }, [data])
+  }, [data]);
 
   const refreshWalletDetails = async () => {
     try {
-      const { data: updatedData } = await refetch()
+      const { data: updatedData } = await refetch();
       if (updatedData?.getWalletDetails?.walletDetails) {
-        setWalletDetails(updatedData.getWalletDetails.walletDetails)
+        setWalletDetails(updatedData.getWalletDetails.walletDetails);
       }
     } catch (err) {
-      console.error("Error fetching wallet details:", err)
+      console.error("Error fetching wallet details:", err);
     }
-  }
+  };
 
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setOpen(false)
-    refreshWalletDetails()
-  }
+    setOpen(false);
+    refreshWalletDetails();
+  };
 
   const navigateToCreateOrder = () => {
-    router.push("/createorder")
-  }
+    router.push("/createorder");
+  };
 
   return (
     <AppBar
@@ -176,9 +179,12 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
               <HelpOutlineIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Toggle Dark Mode">
-            <IconButton color="primary">
-              <Brightness4Icon />
+          <Tooltip title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
+            <IconButton
+              color="primary"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
           </Tooltip>
           <Tooltip title="Sign Out">
@@ -192,5 +198,5 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
       {/* Recharge Wallet Modal */}
       <RechargeWalletModal open={open} handleClose={handleClose} />
     </AppBar>
-  )
-}
+  );
+};

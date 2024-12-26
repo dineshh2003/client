@@ -1,10 +1,32 @@
 "use client"
 
 import React from "react";
-import { FirestoreOrder } from "@/interfaces/OrderInterface";
 import { Cancel } from "@mui/icons-material";
 import CompanyCard from "./CompanyCard";
 import { Divider } from "@nextui-org/react";
+import { motion, AnimatePresence } from "framer-motion"
+
+
+interface FirestoreOrder {
+  ID: string
+  Name: string
+  CreatedAt: string
+  UpdatedAt: string
+  CancelledAt: string | null
+  ClosedAt: string | null
+  ProcessedAt: string
+  Currency: string
+  TotalPrice: number
+  SubtotalPrice: number
+  TotalDiscounts: number
+  TotalTax: number
+  TaxesIncluded: boolean
+  FinancialStatus: string
+  FulfillmentStatus: string
+  OrderNumber: number
+  ShopName: string
+  AccountId: string
+}
 
 
 interface ActionProps {
@@ -25,6 +47,27 @@ const companies = [
 const Action: React.FC<ActionProps> = ({ order, onBack }) => {
 
   return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <motion.div
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onBack}
+        />
+        <motion.div
+          className="relative w-[50vw] h-full bg-[#292b35] text-white overflow-y-auto"
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "spring", damping: 30, stiffness: 300 }}
+        >
     <div className="container h-full w-[50vw] flex flex-col py-6 bg-[#292b35] text-white rounded-lg ">
       {/* Header with close button */}
       <div className="flex justify-between items-center mb-6">
@@ -45,8 +88,8 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
       <div className="flex flex-col">
         <label className="text-gray-400 text-sm mb-2">Pickup From</label>
         <select className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300">
-          <option value={order?.ShippingAddress?.address1}>
-            {`tushar-${order?.ShippingAddress?.zip}`}
+          <option value={''}>
+            {``}
           </option>
         </select>
       </div>
@@ -54,7 +97,7 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
         <label className="text-gray-400 text-sm mb-2">Deliver To</label>
         <input
           type="text"
-          value={`${order?.ShippingAddress?.country}, ${order?.ShippingAddress?.city}, ${order?.ShippingAddress?.phone}`}
+          value={''}
           className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
           readOnly
         />
@@ -76,7 +119,7 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
         <label className="text-gray-400 text-sm mb-2">Applied Weight</label>
         <input
           type="number"
-          value={order?.TotalWeight?.toFixed(3) || ""}
+          value={''}
           className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
           readOnly
         />
@@ -85,7 +128,7 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
         <label className="text-gray-400 text-sm mb-2">Length (CM)</label>
         <input
           type="number"
-          value={order?.Dimensions?.Length || 0}
+          value={''}
           className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
         />
       </div>
@@ -93,7 +136,7 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
         <label className="text-gray-400 text-sm mb-2">Width (CM)</label>
         <input
           type="number"
-          value={order?.Dimensions?.Width || 0}
+          value={'order?.Dimensions?.Width || 0'}
           className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
         />
       </div>
@@ -101,7 +144,7 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
         <label className="text-gray-400 text-sm mb-2">Height (CM)</label>
         <input
           type="number"
-          value={order?.Dimensions?.Height || 0}
+          value={'order?.Dimensions?.Height || 0'}
           className="bg-[#12121256] p-5 rounded-xl border border-[#3d3d3d] text-gray-300"
         />
       </div>
@@ -124,6 +167,9 @@ const Action: React.FC<ActionProps> = ({ order, onBack }) => {
     </div>
     </div>
     </div>
+    </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
