@@ -70,7 +70,7 @@ interface FirestoreOrder {
   ClosedAt: string | null
   ProcessedAt: string
   Currency: string
-  TotalPrice: number
+  TotalPrice: number | Float64Array;
   SubtotalPrice: number
   TotalDiscounts: number
   TotalTax: number
@@ -91,7 +91,7 @@ interface OrderNode {
   closedAt: string | null
   processedAt: string
   currency: string
-  totalPrice: number
+  totalPrice: number | Float64Array;
   subtotalPrice: number
   totalDiscounts: number
   totalTax: number
