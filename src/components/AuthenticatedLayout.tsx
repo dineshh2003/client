@@ -15,8 +15,8 @@ interface AuthenticatedLayoutProps {
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const [view, setView] = useState<'home' | 'warehouse'>('home');
-
+  const [view, setView] = useState<'home' | 'warehouse' | 'AddWarehouse'>('home');
+  
   // List of authenticated routes where sidebar and navbar should be shown
   const authenticatedRoutes = [
     '/dashboard', 

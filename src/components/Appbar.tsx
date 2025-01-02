@@ -29,7 +29,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; // Import for theme toggle functionality
 
 interface AppbarProps {
-  setView: (view: "home" | "warehouse") => void;
+  setView: (view: "home" | "warehouse" | "AddWarehouse") => void;
 }
 
 const GET_WALLET_DETAILS = gql`
