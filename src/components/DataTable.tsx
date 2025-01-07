@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState } from "react"
 import { useQuery } from "@apollo/client"
@@ -20,9 +20,7 @@ import ActionMenu from "./ActionMenu"
 import Action from "./Action"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion, AnimatePresence } from "framer-motion"
-
-
-
+import { useTheme } from "next-themes"
 
 
 // GraphQL query definition
@@ -60,7 +58,6 @@ const GET_ORDERS = gql`
   }
 `
 
-// Types
 interface FirestoreOrder {
   ID: string
   Name: string
@@ -70,7 +67,7 @@ interface FirestoreOrder {
   ClosedAt: string | null
   ProcessedAt: string
   Currency: string
-  TotalPrice: number | Float64Array;
+  TotalPrice: number | Float64Array
   SubtotalPrice: number
   TotalDiscounts: number
   TotalTax: number
@@ -81,6 +78,8 @@ interface FirestoreOrder {
   ShopName: string
   AccountId: string
 }
+
+
 
 interface OrderNode {
   id: string
@@ -135,7 +134,7 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
   const [selectedOrders, setSelectedOrders] = useState<string[]>([])
   const [showShipNow, setShowShipNow] = useState(false)
   const [selectedActionOrder, setSelectedActionOrder] = useState<FirestoreOrder | null>(null)
-
+  const { theme } = useTheme();
   const handleShipNow = (order: FirestoreOrder) => {
     setSelectedActionOrder(order)
     setShowShipNow(true)
@@ -246,185 +245,183 @@ const StoreOrderTable: React.FC<StoreOrderTableProps> = ({
 
   return (
     <>
-    <div className="flex flex-col rounded-b-3xl px-4 bg-gray-900">
-      {/* Search and Filter Controls */}
-      <div className="flex flex-wrap gap-4 py-4">
-        <Input
-          className="w-72 bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-400"
-          placeholder="Search by Order ID or Name"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        
-        <Select value={dateRange} onValueChange={setDateRange}>
-          <SelectTrigger className="w-72 bg-gray-800 border-gray-700 text-gray-100">
-            <SelectValue placeholder="Select date range" />
-          </SelectTrigger>
-          <SelectContent className="bg-gray-800 border-gray-700">
-            <SelectItem value="all" className="text-gray-100">All Orders</SelectItem>
-            <SelectItem value="24 hours" className="text-gray-100">Last 24 Hours</SelectItem>
-            <SelectItem value="2 days" className="text-gray-100">Last 2 Days</SelectItem>
-            <SelectItem value="1 week" className="text-gray-100">Last 1 Week</SelectItem>
-            <SelectItem value="custom" className="text-gray-100">Custom Range</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className={`flex flex-col rounded-b-3xl px-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+        {/* Search and Filter Controls */}
+        <div className="flex flex-wrap gap-4 py-4">
+          <Input
+            className={`w-72 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-800 placeholder:text-gray-500'}`}
+            placeholder="Search by Order ID or Name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className={`w-72 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}>
+              <SelectValue placeholder="Select date range" />
+            </SelectTrigger>
+            <SelectContent className={theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}>
+              <SelectItem value="all" className={theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}>All Orders</SelectItem>
+              <SelectItem value="24 hours" className={theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}>Last 24 Hours</SelectItem>
+              <SelectItem value="2 days" className={theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}>Last 2 Days</SelectItem>
+              <SelectItem value="1 week" className={theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}>Last 1 Week</SelectItem>
+              <SelectItem value="custom" className={theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}>Custom Range</SelectItem>
+            </SelectContent>
+          </Select>
 
-        {dateRange === "custom" && (
-          <div className="flex gap-4">
-            <Input
-              type="date"
-              className="w-72 bg-gray-800 border-gray-700 text-gray-100"
-              value={customStartDate}
-              onChange={(e) => setCustomStartDate(e.target.value)}
-            />
-            <Input
-              type="date"
-              className="w-72 bg-gray-800 border-gray-700 text-gray-100"
-              value={customEndDate}
-              onChange={(e) => setCustomEndDate(e.target.value)}
-            />
+          {dateRange === "custom" && (
+            <div className="flex gap-4">
+              <Input
+                type="date"
+                className={`w-72 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+              />
+              <Input
+                type="date"
+                className={`w-72 ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-800'}`}
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Scrollable Table Container */}
+        <div className="relative overflow-auto max-h-[600px] scrollbar-hide">
+          <div className="min-w-[1000px]">
+            <Table>
+              <TableHeader className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                <TableRow className={theme === 'dark' ? 'border-gray-600 hover:bg-gray-600' : 'border-gray-200 hover:bg-gray-200'}>
+                  <TableHead className={`w-[50px] ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <Checkbox
+                      checked={selectedOrders.length === orders.length}
+                      onCheckedChange={toggleAllOrders}
+                      aria-label="Select all orders"
+                      className={theme === 'dark' ? 'border-gray-500' : 'border-gray-400'}
+                    />
+                  </TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>ORDER ID</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>NAME</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>CREATED AT</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>UPDATED AT</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>CANCELLED AT</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>CLOSED AT</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>PROCESSED AT</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>CURRENCY</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>TOTAL PRICE</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>SUBTOTAL PRICE</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>TOTAL DISCOUNTS</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>TOTAL TAX</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>TAXES INCLUDED</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>FINANCIAL STATUS</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>FULFILLMENT STATUS</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>ORDER NUMBER</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>SHOP NAME</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>ACCOUNT ID</TableHead>
+                  <TableHead className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>ACTION</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  [...Array(5)].map((_, index) => (
+                    <TableRow key={index} className={theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}>
+                      {[...Array(40)].map((_, idx) => (
+                        <TableCell key={idx}>
+                          <Skeleton className={`h-4 w-full ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : orders.filter(handleSearch).length === 0 ? (
+                  <TableRow className={theme === 'dark' ? 'border-gray-600' : 'border-gray-200'}>
+                    <TableCell colSpan={40} className={`text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                      No orders found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  orders.filter(handleSearch).map((order) => (
+                    <TableRow key={order.ID} className={`${theme === 'dark' ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-100'}`}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedOrders.includes(order.ID)}
+                          onCheckedChange={() => toggleOrderSelection(order.ID)}
+                          aria-label={`Select order ${order.ID}`}
+                          className={theme === 'dark' ? 'border-gray-500' : 'border-gray-400'}
+                        />
+                      </TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.ID}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.Name}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.CreatedAt}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.UpdatedAt}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.CancelledAt}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.ClosedAt}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.ProcessedAt}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.Currency}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.TotalPrice}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.SubtotalPrice}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.TotalDiscounts}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.TotalTax}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.TaxesIncluded ? 'Yes' : 'No'}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.FinancialStatus}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.FulfillmentStatus}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.OrderNumber}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.ShopName}</TableCell>
+                      <TableCell className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{order.AccountId}</TableCell>
+                      <TableCell>
+                        <ActionMenu
+                          onShipNow={() => handleShipNow(order)}
+                          onViewDetails={() => handleViewDetails(order)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        {/* Pagination Controls */}
+        {data?.getOrdersForAccount.pageInfo && (
+          <div className={`flex justify-between items-center mt-4 p-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div>
+              {selectedOrders.length} order(s) selected
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+                className={`${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200'}`}
+              >
+                Previous
+              </Button>
+              <span className="px-4 py-2">
+                Page {data.getOrdersForAccount.pageInfo.currentPage} of{" "}
+                {data.getOrdersForAccount.pageInfo.totalPages}
+              </span>
+              <Button
+                variant="outline"
+                disabled={page === data.getOrdersForAccount.pageInfo.totalPages}
+                onClick={() => setPage(page + 1)}
+                className={`${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200'}`}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Scrollable Table Container */}
-      <div className="relative overflow-auto max-h-[600px] scrollbar-hide">
-        <div className="min-w-[1000px]">
-          <Table>
-            <TableHeader className="sticky rounded-lg p-2 top-0 bg-gray-800 z-10">
-              <TableRow className="border-gray-800 hover:bg-gray-800">
-                <TableHead className="w-[50px] text-gray-400">
-                  <Checkbox
-                    checked={selectedOrders.length === orders.length}
-                    onCheckedChange={toggleAllOrders}
-                    aria-label="Select all orders"
-                    className="border-gray-600"
-                  />
-                </TableHead>
-                <TableHead className="text-gray-400">ORDER ID</TableHead>
-                <TableHead className="text-gray-400">NAME</TableHead>
-                <TableHead className="text-gray-400">CREATED AT</TableHead>
-                <TableHead className="text-gray-400">UPDATED AT</TableHead>
-                <TableHead className="text-gray-400">CANCELLED AT</TableHead>
-                <TableHead className="text-gray-400">CLOSED AT</TableHead>
-                <TableHead className="text-gray-400">PROCESSED AT</TableHead>
-                <TableHead className="text-gray-400">CURRENCY</TableHead>
-                <TableHead className="text-gray-400">TOTAL PRICE</TableHead>
-                <TableHead className="text-gray-400">SUBTOTAL PRICE</TableHead>
-                <TableHead className="text-gray-400">TOTAL DISCOUNTS</TableHead>
-                <TableHead className="text-gray-400">TOTAL TAX</TableHead>
-                <TableHead className="text-gray-400">TAXES INCLUDED</TableHead>
-                <TableHead className="text-gray-400">FINANCIAL STATUS</TableHead>
-                <TableHead className="text-gray-400">FULFILLMENT STATUS</TableHead>
-                <TableHead className="text-gray-400">ORDER NUMBER</TableHead>
-                <TableHead className="text-gray-400">SHOP NAME</TableHead>
-                <TableHead className="text-gray-400">ACCOUNT ID</TableHead>
-                <TableHead className="text-gray-400">ACTION</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                [...Array(5)].map((_, index) => (
-                  <TableRow key={index} className="border-gray-800">
-                    {[...Array(40)].map((_, idx) => (
-                      <TableCell key={idx}>
-                        <Skeleton className="h-4 w-full bg-gray-800" />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : orders.filter(handleSearch).length === 0 ? (
-                <TableRow className="border-gray-800">
-                  <TableCell colSpan={40} className="text-center text-gray-400">
-                    No orders found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                orders.filter(handleSearch).map((order) => (
-                  <TableRow key={order.ID} className="border-gray-800 hover:bg-gray-800">
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedOrders.includes(order.ID)}
-                        onCheckedChange={() => toggleOrderSelection(order.ID)}
-                        aria-label={`Select order ${order.ID}`}
-                        className="border-gray-600"
-                      />
-                    </TableCell>
-                    <TableCell className="text-gray-400">{order.ID}</TableCell>
-        <TableCell className="text-gray-400">{order.Name}</TableCell>
-        <TableCell className="text-gray-400">{order.CreatedAt}</TableCell>
-        <TableCell className="text-gray-400">{order.UpdatedAt}</TableCell>
-        <TableCell className="text-gray-400">{order.CancelledAt}</TableCell>
-        <TableCell className="text-gray-400">{order.ClosedAt}</TableCell>
-        <TableCell className="text-gray-400">{order.ProcessedAt}</TableCell>
-        <TableCell className="text-gray-400">{order.Currency}</TableCell>
-        <TableCell className="text-gray-400">{order.TotalPrice}</TableCell>
-        <TableCell className="text-gray-400">{order.SubtotalPrice}</TableCell>
-        <TableCell className="text-gray-400">{order.TotalDiscounts}</TableCell>
-        <TableCell className="text-gray-400">{order.TotalTax}</TableCell>
-        <TableCell className="text-gray-400">{order.TaxesIncluded ? 'Yes' : 'No'}</TableCell>
-        <TableCell className="text-gray-400">{order.FinancialStatus}</TableCell>
-        <TableCell className="text-gray-400">{order.FulfillmentStatus}</TableCell>
-        <TableCell className="text-gray-400">{order.OrderNumber}</TableCell>
-        <TableCell className="text-gray-400">{order.ShopName}</TableCell>
-        <TableCell className="text-gray-400">{order.AccountId}</TableCell>
-
-                    <TableCell>
-                    <ActionMenu
-            onShipNow={() => handleShipNow(order)}
-            onViewDetails={() => handleViewDetails(order)}
+      <AnimatePresence>
+        {showShipNow && selectedActionOrder && (
+          <Action
+            order={selectedActionOrder}
+            onBack={() => setShowShipNow(false)}
           />
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Pagination Controls */}
-      {data?.getOrdersForAccount.pageInfo && (
-        <div className="flex justify-between items-center mt-4 p-4">
-          <div className="text-gray-100">
-            {selectedOrders.length} order(s) selected
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
-              className="bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700"
-            >
-              Previous
-            </Button>
-            <span className="px-4 py-2 text-gray-100">
-              Page {data.getOrdersForAccount.pageInfo.currentPage} of{" "}
-              {data.getOrdersForAccount.pageInfo.totalPages}
-            </span>
-            <Button
-              variant="outline"
-              disabled={page === data.getOrdersForAccount.pageInfo.totalPages}
-              onClick={() => setPage(page + 1)}
-              className="bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700"
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
-
-<AnimatePresence>
-{showShipNow && selectedActionOrder && (
-  <Action
-    order={selectedActionOrder}
-    onBack={() => setShowShipNow(false)}
-  />
-)}
-</AnimatePresence>
-</>
-
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 

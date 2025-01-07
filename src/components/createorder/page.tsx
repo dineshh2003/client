@@ -25,10 +25,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Appbar } from "@/components/Appbar"
+import { useTheme } from "next-themes"
 
 export default function CreateOrderComponent() {
   const [currentStep, setCurrentStep] = React.useState(1)
   const totalSteps = 6
+  const { theme } = useTheme()
 
   const logistics = [
     { name: "Xpressbees", rating: 3.6, price: 0, logo: "X", bestMatch: true },
@@ -38,11 +40,17 @@ export default function CreateOrderComponent() {
   ]
 
   return (
-    <div className="min-h-screen w-[90vw] bg-zinc-950 p-4 text-white">
+    <div className={cn(
+      "min-h-screen w-full p-4 transition-colors duration-300",
+      theme === "dark" ? "bg-[#1e293b] text-gray-100" : "bg-gray-100 text-gray-900"
+    )}>
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-600">
-            <MapPin className="h-6 w-6" />
+          <div className={cn(
+            "flex h-12 w-12 items-center justify-center rounded-full",
+            theme === "dark" ? "bg-[#42C195]" : "bg-[#2C7A7B]"
+          )}>
+            <MapPin className="h-6 w-6 text-white" />
           </div>
           <h1 className="text-2xl font-semibold">Create Order</h1>
         </div>
@@ -50,10 +58,16 @@ export default function CreateOrderComponent() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
           <div className="space-y-6">
             {/* Shipping Address Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-emerald-500 text-sm font-medium text-emerald-500">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium",
+                    theme === "dark" ? "border-[#42C195] text-[#42C195]" : "border-[#2C7A7B] text-[#2C7A7B]"
+                  )}>
                     1
                   </div>
                   <h2 className="text-xl font-semibold">Where are you sending to?</h2>
@@ -66,13 +80,19 @@ export default function CreateOrderComponent() {
                       <Input
                         id="pincode"
                         placeholder="Enter PIN Code"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
                       <Label htmlFor="state">State<span className="text-red-500">*</span></Label>
                       <Select>
-                        <SelectTrigger className="mt-1.5 bg-zinc-800">
+                        <SelectTrigger className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}>
                           <SelectValue placeholder="Select State" />
                         </SelectTrigger>
                         <SelectContent>
@@ -84,7 +104,10 @@ export default function CreateOrderComponent() {
                     <div>
                       <Label htmlFor="city">City<span className="text-red-500">*</span></Label>
                       <Select>
-                        <SelectTrigger className="mt-1.5 bg-zinc-800">
+                        <SelectTrigger className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}>
                           <SelectValue placeholder="Select City" />
                         </SelectTrigger>
                         <SelectContent>
@@ -101,7 +124,10 @@ export default function CreateOrderComponent() {
                       <Input
                         id="name"
                         placeholder="Enter Name"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
@@ -109,7 +135,10 @@ export default function CreateOrderComponent() {
                       <Input
                         id="company"
                         placeholder="Enter Company Name"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
@@ -118,7 +147,10 @@ export default function CreateOrderComponent() {
                         id="email"
                         type="email"
                         placeholder="Enter Email"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                   </div>
@@ -127,28 +159,40 @@ export default function CreateOrderComponent() {
                     <div>
                       <Label htmlFor="mobile">Mobile Number<span className="text-red-500">*</span></Label>
                       <div className="mt-1.5 flex">
-                        <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-zinc-700 bg-zinc-800 px-3">
+                        <div className={cn(
+                          "flex items-center gap-1 rounded-l-md border border-r-0 px-3",
+                          theme === "dark" ? "border-gray-700 bg-[#1e293b]" : "border-gray-300 bg-gray-100"
+                        )}>
                           <span className="text-sm">🇮🇳</span>
                           <span className="text-sm">+91</span>
                         </div>
                         <Input
                           id="mobile"
                           placeholder="Enter Mobile Number"
-                          className="rounded-l-none bg-zinc-800"
+                          className={cn(
+                            "rounded-l-none",
+                            theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                          )}
                         />
                       </div>
                     </div>
                     <div>
                       <Label htmlFor="alternate-mobile">Alternate Number</Label>
                       <div className="mt-1.5 flex">
-                        <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-zinc-700 bg-zinc-800 px-3">
+                        <div className={cn(
+                          "flex items-center gap-1 rounded-l-md border border-r-0 px-3",
+                          theme === "dark" ? "border-gray-700 bg-[#1e293b]" : "border-gray-300 bg-gray-100"
+                        )}>
                           <span className="text-sm">🇮🇳</span>
                           <span className="text-sm">+91</span>
                         </div>
                         <Input
                           id="alternate-mobile"
                           placeholder="Enter Mobile Number"
-                          className="rounded-l-none bg-zinc-800"
+                          className={cn(
+                            "rounded-l-none",
+                            theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                          )}
                         />
                       </div>
                     </div>
@@ -159,7 +203,10 @@ export default function CreateOrderComponent() {
                     <Input
                       id="address1"
                       placeholder="Enter Address line 1"
-                      className="mt-1.5 bg-zinc-800"
+                      className={cn(
+                        "mt-1.5",
+                        theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                      )}
                     />
                   </div>
 
@@ -168,7 +215,10 @@ export default function CreateOrderComponent() {
                     <Input
                       id="address2"
                       placeholder="Enter Address line 2"
-                      className="mt-1.5 bg-zinc-800"
+                      className={cn(
+                        "mt-1.5",
+                        theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                      )}
                     />
                   </div>
 
@@ -186,10 +236,16 @@ export default function CreateOrderComponent() {
             </Card>
 
             {/* Order Details Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-emerald-500 text-sm font-medium text-emerald-500">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium",
+                    theme === "dark" ? "border-[#42C195] text-[#42C195]" : "border-[#2C7A7B] text-[#2C7A7B]"
+                  )}>
                     2
                   </div>
                   <h2 className="text-xl font-semibold">Order Details</h2>
@@ -203,7 +259,10 @@ export default function CreateOrderComponent() {
                         id="order-id"
                         defaultValue="1733532061"
                         readOnly
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
@@ -211,7 +270,10 @@ export default function CreateOrderComponent() {
                       <Input
                         id="sub-order"
                         placeholder="Enter Sub Order Number"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
@@ -220,7 +282,10 @@ export default function CreateOrderComponent() {
                         id="order-date"
                         type="date"
                         defaultValue="2024-07-12"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                   </div>
@@ -228,7 +293,10 @@ export default function CreateOrderComponent() {
                   <div>
                     <Label htmlFor="pickup-type">Pickup Type<span className="text-red-500">*</span></Label>
                     <Select defaultValue="forward">
-                      <SelectTrigger className="mt-1.5 bg-zinc-800">
+                      <SelectTrigger className={cn(
+                        "mt-1.5",
+                        theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                      )}>
                         <SelectValue placeholder="Select Pickup Type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -242,17 +310,26 @@ export default function CreateOrderComponent() {
             </Card>
 
             {/* Product Details Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-emerald-500 text-sm font-medium text-emerald-500">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium",
+                    theme === "dark" ? "border-[#42C195] text-[#42C195]" : "border-[#2C7A7B] text-[#2C7A7B]"
+                  )}>
                     3
                   </div>
                   <h2 className="text-xl font-semibold">Product Details</h2>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="rounded-lg border border-zinc-800 p-4">
+                  <div className={cn(
+                    "rounded-lg border p-4",
+                    theme === "dark" ? "border-gray-800" : "border-gray-200"
+                  )}>
                     <div className="mb-4 flex items-center justify-between">
                       <span className="font-medium">#1</span>
                     </div>
@@ -264,7 +341,10 @@ export default function CreateOrderComponent() {
                           <Input
                             id="product-name"
                             placeholder="Enter Product Name"
-                            className="mt-1.5 bg-zinc-800"
+                            className={cn(
+                              "mt-1.5",
+                              theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                            )}
                           />
                         </div>
                         <div>
@@ -273,7 +353,10 @@ export default function CreateOrderComponent() {
                             id="quantity"
                             type="number"
                             placeholder="Add Qty"
-                            className="mt-1.5 bg-zinc-800"
+                            className={cn(
+                              "mt-1.5",
+                              theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                            )}
                           />
                         </div>
                         <div>
@@ -282,7 +365,10 @@ export default function CreateOrderComponent() {
                             id="price"
                             type="number"
                             placeholder="Enter Product Price"
-                            className="mt-1.5 bg-zinc-800"
+                            className={cn(
+                              "mt-1.5",
+                              theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                            )}
                           />
                         </div>
                       </div>
@@ -293,7 +379,10 @@ export default function CreateOrderComponent() {
                           <Input
                             id="sku"
                             placeholder="Enter SKU"
-                            className="mt-1.5 bg-zinc-800"
+                            className={cn(
+                              "mt-1.5",
+                              theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                            )}
                           />
                         </div>
                         <div>
@@ -302,7 +391,10 @@ export default function CreateOrderComponent() {
                             id="tax"
                             type="number"
                             placeholder="Enter Tax Rate"
-                            className="mt-1.5 bg-zinc-800"
+                            className={cn(
+                              "mt-1.5",
+                              theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                            )}
                           />
                         </div>
                         <div>
@@ -310,14 +402,20 @@ export default function CreateOrderComponent() {
                           <Input
                             id="hsn"
                             placeholder="Enter HSN Code"
-                            className="mt-1.5 bg-zinc-800"
+                            className={cn(
+                              "mt-1.5",
+                              theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                            )}
                           />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className={cn(
+                    "gap-2",
+                    theme === "dark" ? "bg-[#1e293b] text-white hover:bg-[#2d3748]" : "bg-white text-gray-900 hover:bg-gray-100"
+                  )}>
                     <Plus className="h-4 w-4" />
                     Add Another
                   </Button>
@@ -326,10 +424,16 @@ export default function CreateOrderComponent() {
             </Card>
 
             {/* Payment Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-emerald-500 text-sm font-medium text-emerald-500">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium",
+                    theme === "dark" ? "border-[#42C195] text-[#42C195]" : "border-[#2C7A7B] text-[#2C7A7B]"
+                  )}>
                     4
                   </div>
                   <div className="flex items-center gap-2">
@@ -375,11 +479,17 @@ export default function CreateOrderComponent() {
                   <div className="flex justify-end">
                     <div className="text-right">
                       <div className="flex items-center justify-end gap-4">
-                        <span className="text-sm text-zinc-400">Sub Total</span>
+                        <span className={cn(
+                          "text-sm",
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        )}>Sub Total</span>
                         <span className="font-medium">₹0.00</span>
                       </div>
                       <div className="mt-1 flex items-center justify-end gap-4">
-                        <span className="text-sm text-zinc-400">Total (Prepaid)</span>
+                        <span className={cn(
+                          "text-sm",
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        )}>Total (Prepaid)</span>
                         <span className="font-medium">₹0.00 (Prepaid)</span>
                       </div>
                     </div>
@@ -389,10 +499,16 @@ export default function CreateOrderComponent() {
             </Card>
 
             {/* Parcel Size Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-emerald-500 text-sm font-medium text-emerald-500">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium",
+                    theme === "dark" ? "border-[#42C195] text-[#42C195]" : "border-[#2C7A7B] text-[#2C7A7B]"
+                  )}>
                     5
                   </div>
                   <h2 className="text-xl font-semibold">Parcel Size</h2>
@@ -406,7 +522,10 @@ export default function CreateOrderComponent() {
                         id="length"
                         type="number"
                         placeholder="Enter Length (cms)"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
@@ -415,7 +534,10 @@ export default function CreateOrderComponent() {
                         id="width"
                         type="number"
                         placeholder="Enter Width (cms)"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
@@ -424,7 +546,10 @@ export default function CreateOrderComponent() {
                         id="height"
                         type="number"
                         placeholder="Enter Height (cms)"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                   </div>
@@ -436,11 +561,17 @@ export default function CreateOrderComponent() {
                         id="weight"
                         type="number"
                         placeholder="Enter Physical Weight (kg)"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div className="flex items-end">
-                      <span className="text-sm text-zinc-400">Volumetric wt: 0.000 kg</span>
+                      <span className={cn(
+                        "text-sm",
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      )}>Volumetric wt: 0.000 kg</span>
                     </div>
                   </div>
                 </div>
@@ -448,10 +579,16 @@ export default function CreateOrderComponent() {
             </Card>
 
             {/* Other Details Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-emerald-500 text-sm font-medium text-emerald-500">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium",
+                    theme === "dark" ? "border-[#42C195] text-[#42C195]" : "border-[#2C7A7B] text-[#2C7A7B]"
+                  )}>
                     6
                   </div>
                   <h2 className="text-xl font-semibold">Other Details</h2>
@@ -464,20 +601,29 @@ export default function CreateOrderComponent() {
                       <Input
                         id="reseller"
                         placeholder="Enter Reseller Name"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                     <div>
                       <Label htmlFor="alt-number">Alternate Number (Optional)</Label>
                       <div className="mt-1.5 flex">
-                        <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-zinc-700 bg-zinc-800 px-3">
+                        <div className={cn(
+                          "flex items-center gap-1 rounded-l-md border border-r-0 px-3",
+                          theme === "dark" ? "border-gray-700 bg-[#1e293b]" : "border-gray-300 bg-gray-100"
+                        )}>
                           <span className="text-sm">🇮🇳</span>
                           <span className="text-sm">+91</span>
                         </div>
                         <Input
                           id="alt-number"
                           placeholder="Enter"
-                          className="rounded-l-none bg-zinc-800"
+                          className={cn(
+                            "rounded-l-none",
+                            theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                          )}
                         />
                       </div>
                     </div>
@@ -486,7 +632,10 @@ export default function CreateOrderComponent() {
                       <Input
                         id="eway"
                         placeholder="Enter Eway Bill Number"
-                        className="mt-1.5 bg-zinc-800"
+                        className={cn(
+                          "mt-1.5",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                        )}
                       />
                     </div>
                   </div>
@@ -496,7 +645,10 @@ export default function CreateOrderComponent() {
                     <Input
                       id="gstin"
                       placeholder="Enter GSTIN Number"
-                      className="mt-1.5 bg-zinc-800"
+                      className={cn(
+                        "mt-1.5",
+                        theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                      )}
                     />
                   </div>
                 </div>
@@ -504,25 +656,40 @@ export default function CreateOrderComponent() {
             </Card>
 
             {/* Warehouse Section */}
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-6">
                 <div className="mb-6 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <h2 className="text-xl font-semibold">Warehouse Address</h2>
                   </div>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className={cn(
+                    "gap-2",
+                    theme === "dark" ? "bg-[#1e293b] text-white hover:bg-[#2d3748]" : "bg-white text-gray-900 hover:bg-gray-100"
+                  )}>
                     Add Address
                   </Button>
                 </div>
 
-                <div className="rounded-lg border border-zinc-800 p-4">
+                <div className={cn(
+                  "rounded-lg border p-4",
+                  theme === "dark" ? "border-gray-800" : "border-gray-200"
+                )}>
                   <div className="flex gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-zinc-700">
+                    <div className={cn(
+                      "flex h-12 w-12 items-center justify-center rounded-lg border",
+                      theme === "dark" ? "border-gray-700" : "border-gray-300"
+                    )}>
                       <Home className="h-6 w-6" />
                     </div>
                     <div>
                       <div className="font-medium">shalu singhal</div>
-                      <div className="mt-1 text-sm text-zinc-400">
+                      <div className={cn(
+                        "mt-1 text-sm",
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      )}>
                         sc 115 shastri nagar ghaziabad Ghaziabad uttar pradesh 201002
                       </div>
                     </div>
@@ -538,7 +705,10 @@ export default function CreateOrderComponent() {
 
           {/* Right Sidebar */}
           <div className="space-y-6">
-            <div className="h-[300px] overflow-hidden rounded-lg border border-zinc-800">
+            <div className={cn(
+              "h-[300px] overflow-hidden rounded-lg border",
+              theme === "dark" ? "border-gray-800" : "border-border-gray-200"
+            )}>
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.6743466881367!2d77.43681007538776!3d28.642052175665705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cee22c60837b7%3A0x7c35343eceb7bde2!2sShastri%20Nagar%2C%20Ghaziabad%2C%20Uttar%20Pradesh%20201002!5e0!3m2!1sen!2sin!4v1704634110112!5m2!1sen!2sin"
                 width="100%"
@@ -550,12 +720,18 @@ export default function CreateOrderComponent() {
               />
             </div>
 
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className={cn(
+              "transition-colors duration-300",
+              theme === "dark" ? "border-gray-800 bg-[#111827]" : "border-gray-200 bg-white"
+            )}>
               <CardContent className="p-4">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Logistics</h3>
                   <Select defaultValue="fast">
-                    <SelectTrigger className="w-[160px] bg-zinc-800">
+                    <SelectTrigger className={cn(
+                      "w-[160px]",
+                      theme === "dark" ? "bg-[#1e293b]" : "bg-gray-50"
+                    )}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -570,26 +746,41 @@ export default function CreateOrderComponent() {
                     <div
                       key={item.name}
                       className={cn(
-                        "flex items-center justify-between rounded-lg border border-zinc-800 p-4",
-                        item.bestMatch && "border-emerald-500/50 bg-emerald-500/10"
+                        "flex items-center justify-between rounded-lg border p-4 transition-colors duration-300",
+                        theme === "dark"
+                          ? item.bestMatch ? "border-[#42C195]/50 bg-[#42C195]/10" : "border-gray-800"
+                          : item.bestMatch ? "border-[#2C7A7B]/50 bg-[#2C7A7B]/10" : "border-gray-200"
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 font-medium">
+                        <div className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-lg font-medium",
+                          theme === "dark" ? "bg-[#1e293b]" : "bg-gray-100"
+                        )}>
                           {item.logo}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{item.name}</span>
                             {item.bestMatch && (
-                              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-500">
+                              <span className={cn(
+                                "rounded-full px-2 py-0.5 text-xs font-medium",
+                                theme === "dark"
+                                  ? "bg-[#42C195]/20 text-[#42C195]"
+                                  : "bg-[#2C7A7B]/20 text-[#2C7A7B]"
+                              )}>
                                 Best Matched
                               </span>
                             )}
                           </div>
                           <div className="mt-0.5 flex items-center gap-1">
                             <span className="text-sm text-yellow-500">★</span>
-                            <span className="text-sm text-zinc-400">{item.rating}</span>
+                            <span className={cn(
+                              "text-sm",
+                              theme === "dark" ? "text-gray-400" : "text-gray-600"
+                            )}>
+                              {item.rating}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -601,8 +792,12 @@ export default function CreateOrderComponent() {
                           className={cn(
                             "flex h-6 w-6 items-center justify-center rounded-full border-2",
                             item.bestMatch
-                              ? "border-emerald-500 bg-emerald-500 text-white"
-                              : "border-zinc-700"
+                              ? theme === "dark"
+                                ? "border-[#42C195] bg-[#42C195] text-white"
+                                : "border-[#2C7A7B] bg-[#2C7A7B] text-white"
+                              : theme === "dark"
+                                ? "border-gray-700"
+                                : "border-gray-300"
                           )}
                         >
                           {item.bestMatch && <Check className="h-4 w-4" />}
@@ -612,7 +807,10 @@ export default function CreateOrderComponent() {
                   ))}
                 </div>
 
-                <div className="mt-4 flex justify-between border-t border-zinc-800 pt-4">
+                <div className={cn(
+                  "mt-4 flex justify-between border-t pt-4",
+                  theme === "dark" ? "border-gray-800" : "border-gray-200"
+                )}>
                   <span className="font-medium">Total (Incl. GST)</span>
                   <span className="font-medium">₹0.00</span>
                 </div>
@@ -624,5 +822,4 @@ export default function CreateOrderComponent() {
     </div>
   )
 }
-
 

@@ -1,135 +1,114 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin, Copy } from 'lucide-react'
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin, Copy } from 'lucide-react';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { cn } from "@/lib/utils";
 
 const orderData = [
-  { week: "Week 1", orders: 820 },
-  { week: "Week 2", orders: 932 },
-  { week: "Week 3", orders: 801 },
-  { week: "Week 4", orders: 1134 },
-  { week: "Week 5", orders: 621 }
-]
+  { week: "Week 1", orders: 420 },
+  { week: "Week 2", orders: 350 },
+  { week: "Week 3", orders: 470 },
+  { week: "Week 4", orders: 380 },
+];
 
-const remittanceData = [
-  { week: "Week 1", amount: 500000 },
-  { week: "Week 2", amount: 780000 },
-  { week: "Week 3", amount: 1000000 },
-  { week: "Week 4", amount: 780000 },
-  { week: "Week 5", amount: 550000 }
-]
+interface AnalyticsProps {
+  theme?: string;
+}
 
-const delayData = [
-  { days: "1 Day", manifest: 5120, pickup: 5000 },
-  { days: "2 Days", manifest: 1400, pickup: 1330 },
-  { days: "3 Days", manifest: 349, pickup: 501 },
-  { days: "4 Days", manifest: 188, pickup: 143 },
-  { days: "5 Days", manifest: 152, pickup: 97 },
-  { days: "6 Days", manifest: 58, pickup: 93 },
-  { days: "6+ Days", manifest: 180, pickup: 241 }
-]
-
-export default function Analytics() {
+export default function Analytics({ theme }: AnalyticsProps) {
   return (
-    <div className="grid gap-4 p-4 md:grid-cols-2 bg-gray-900 text-gray-100">
-      <Card className="bg-gray-800 border-gray-700">
+    <div className="grid gap-6 md:grid-cols-2">
+      <Card className={cn(
+        "transition-all duration-300",
+        theme === "dark"
+          ? "bg-[#111827] border-gray-800"
+          : "bg-white border-gray-200"
+      )}>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg font-medium">Last 30 Days Orders</CardTitle>
-          <span className="text-blue-400">4.30K</span>
+          <CardTitle className={cn(
+            "text-lg font-medium",
+            theme === "dark" ? "text-white" : "text-gray-900"
+          )}>
+            Last 30 Days Orders
+          </CardTitle>
+          <span className={theme === "dark" ? "text-[#42C195]" : "text-[#2C7A7B]"}>
+            4.30K
+          </span>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer height={200}>
             <BarChart data={orderData}>
-              <XAxis dataKey="week" fontSize={12} tickLine={false} axisLine={false} stroke="#9CA3AF" />
-              <YAxis fontSize={12} tickLine={false} axisLine={false} stroke="#9CA3AF" />
-              <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              <XAxis 
+                dataKey="week" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                stroke={theme === "dark" ? "#9CA3AF" : "#4B5563"} 
+              />
+              <YAxis 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                stroke={theme === "dark" ? "#9CA3AF" : "#4B5563"} 
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: theme === "dark" ? '#1e293b' : '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}
+                labelStyle={{ color: theme === "dark" ? '#fff' : '#000' }}
+              />
+              <Bar 
+                dataKey="orders" 
+                fill={theme === "dark" ? "#42C195" : "#2C7A7B"} 
+                radius={[4, 4, 0, 0]} 
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className={cn(
+        "transition-all duration-300",
+        theme === "dark"
+          ? "bg-[#111827] border-gray-800"
+          : "bg-white border-gray-200"
+      )}>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg font-medium">My COD Remittance</CardTitle>
-          <span className="text-blue-400">₹3.70M</span>
+          <CardTitle className={cn(
+            "text-lg font-medium",
+            theme === "dark" ? "text-white" : "text-gray-900"
+          )}>
+            Top Delivery Locations
+          </CardTitle>
+          <Copy className={theme === "dark" ? "text-[#42C195]" : "text-[#2C7A7B]"} />
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer height={200}>
-            <BarChart data={remittanceData}>
-              <XAxis dataKey="week" fontSize={12} tickLine={false} axisLine={false} stroke="#9CA3AF" />
-              <YAxis fontSize={12} tickLine={false} axisLine={false} stroke="#9CA3AF" />
-              <Bar dataKey="amount" fill="#10B981" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gray-800 border-gray-700">
-        <CardHeader>
-          <CardTitle className="text-lg font-medium">Delay Dispatch</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <div className="flex justify-between mb-2">
-              <h4 className="text-sm font-medium">Order to Manifest</h4>
-              <span className="text-sm text-blue-400">7.44K Orders</span>
-            </div>
-            <div className="grid grid-cols-7 gap-2 text-center text-sm">
-              {delayData.map((item) => (
-                <div key={item.days} className="space-y-2">
-                  <div className="text-gray-400">{item.days}</div>
-                  <div className="font-medium">{(item.manifest / 1000).toFixed(2)}K</div>
+          <div className="space-y-4">
+            {[
+              { location: "Mumbai, Maharashtra", count: 1234 },
+              { location: "Delhi, NCR", count: 856 },
+              { location: "Bangalore, Karnataka", count: 743 },
+            ].map((item) => (
+              <div key={item.location} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className={theme === "dark" ? "text-[#42C195]" : "text-[#2C7A7B]"} />
+                  <span className={theme === "dark" ? "text-gray-300" : "text-gray-700"}>
+                    {item.location}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between mb-2">
-              <h4 className="text-sm font-medium">Manifest to Pickup</h4>
-              <span className="text-sm text-blue-400">7.40K Orders</span>
-            </div>
-            <div className="grid grid-cols-7 gap-2 text-center text-sm">
-              {delayData.map((item) => (
-                <div key={item.days} className="space-y-2">
-                  <div className="text-gray-400">{item.days}</div>
-                  <div className="font-medium">{(item.pickup / 1000).toFixed(2)}K</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gray-800 border-gray-700">
-        <CardHeader>
-          <CardTitle className="text-lg font-medium">Not Dispatched Summary</CardTitle>
-          <span className="text-sm text-blue-400">584 Orders</span>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-red-900 p-2">
-                <MapPin className="h-4 w-4 text-red-400" />
+                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                  {item.count}
+                </span>
               </div>
-              <div>
-                <div className="text-2xl font-bold">584</div>
-                <div className="text-sm text-gray-400">Incorrect Address</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-gray-700 p-2">
-                <Copy className="h-4 w-4 text-gray-400" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">0</div>
-                <div className="text-sm text-gray-400">Duplicate Order</div>
-              </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 

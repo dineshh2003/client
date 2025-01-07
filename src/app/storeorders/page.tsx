@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { FirestoreOrder } from "@/interfaces/OrderInterface";
 import IndexBar from "../../components/IndexBar";
@@ -8,8 +8,12 @@ import TrackBar from "../../components/TrackBar";
 import OrderTableSkeleton from "../../utils/OrderTableSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
+import dynamic from 'next/dynamic';
 
-const StoreOrderTable = lazy(() => import("../../components/DataTable"));
+const StoreOrderTable = dynamic(() => import("../../components/DataTable"), {
+  ssr: false,
+  loading: () => <OrderTableSkeleton />
+});
 
 const EXCHANGE_ACCESS_TOKEN_MUTATION = gql`
   mutation ExchangeAccessToken($shopName: String!, $code: String!, $accountId: String!) {
@@ -31,7 +35,6 @@ const OrdersPage = () => {
   const key = "orders_quickstart-5091d5ef.myshopify.com";
   const [view, setView] = useState<'home' | 'warehouse'>('home');
 
-  // Extract code and shop from URL
   useEffect(() => {
     console.log("Extracting query parameters...");
     const extractedCode = searchParams.get("code");
@@ -46,7 +49,6 @@ const OrdersPage = () => {
     }
   }, [searchParams]);
 
-  // Exchange access token after extracting code and shop name
   useEffect(() => {
     if (code && shopName) {
       console.log("Exchanging access token...");
@@ -68,28 +70,24 @@ const OrdersPage = () => {
     }
   }, [code, shopName, exchangeAccessToken]);
 
-
- const handleSelectOrder = (order: FirestoreOrder) => {
-    // Your order selection logic
+  const handleSelectOrder = (order: FirestoreOrder) => {
     setViewOrder(order);
   };
 
- 
   return (
-        <div className="p-4">
-          <IndexBar />
-          <TrackBar onSync={() => {
-      // Implement your sync logic here
-      // For example, refetching orders or updating data
+    <div className="p-4">
+      <IndexBar />
+      <TrackBar onSync={() => {
+        // Implement your sync logic here
+        // For example, refetching orders or updating data
       }} />
-          <Suspense fallback={<OrderTableSkeleton />}>
-            <StoreOrderTable
-              accountId="accountId456"
-              onSelectOrder={handleSelectOrder}
-            />
-          </Suspense>
-        </div>
+      <StoreOrderTable
+        accountId="accountId456"
+        onSelectOrder={handleSelectOrder}
+      />
+    </div>
   );
 };
 
 export default OrdersPage;
+

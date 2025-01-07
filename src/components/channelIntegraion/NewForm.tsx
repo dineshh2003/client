@@ -1,7 +1,15 @@
+"use client"
+
 import { useState, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { motion } from "framer-motion"
 
 interface AddNewFormProps {
   onClose: () => void;
@@ -13,16 +21,19 @@ const INTEGRATE_SHOP_MUTATION = gql`
   }
 `;
 
-
-
 export default function AddNewForm({ onClose }: AddNewFormProps) {
   const [shopName, setShopName] = useState('');
   const [code, setCode] = useState<string | null>(null);
   const [integrateShop, { loading, error }] = useMutation(INTEGRATE_SHOP_MUTATION);
   const searchParams = useSearchParams();
+  const { theme } = useTheme();
 
-  // Extract "code" from the URL after component mounts
- 
+  useEffect(() => {
+    const extractedCode = searchParams.get("code");
+    if (extractedCode) {
+      setCode(extractedCode);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +45,7 @@ export default function AddNewForm({ onClose }: AddNewFormProps) {
 
       if (data?.integrateShop) {
         console.log(`Redirecting to: ${data.integrateShop}`);
-        window.location.href = data.integrateShop; // Redirect to Shopify authorization URL
+        window.location.href = data.integrateShop;
       } else {
         console.error('No URL returned from the server.');
       }
@@ -43,52 +54,58 @@ export default function AddNewForm({ onClose }: AddNewFormProps) {
     }
   };
 
-
-
   return (
-    <div className="bg-zinc-800 p-6 rounded-lg shadow-lg w-full max-w-md">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Add New Shop</h2>
-        <button onClick={onClose} className="text-zinc-400 hover:text-white">
-          <X className="w-6 h-6" />
-        </button>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="shopName" className="block text-sm font-medium text-zinc-400 mb-1">
-            Shop Name
-          </label>
-          <input
-            type="text"
-            id="shopName"
-            value={shopName}
-            onChange={(e) => {
-              console.log(`Shop name input changed to: ${e.target.value}`);
-              setShopName(e.target.value);
-            }}
-            className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg py-2 px-4 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter shop name"
-            required
-          />
-        </div>
-        {error && <p className="text-red-500 text-sm mb-4">Error: {error.message}</p>}
-        <div className="flex justify-end gap-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            disabled={loading}
-          >
-            {loading ? 'Adding...' : 'Add Shop'}
-          </button>
-        </div>
-      </form>
-    </div>
+    <motion.div
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.9, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    >
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="flex justify-between items-center">
+            <span>Add New Shop</span>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <Label htmlFor="shopName">Shop Name</Label>
+              <Input
+                type="text"
+                id="shopName"
+                value={shopName}
+                onChange={(e) => {
+                  console.log(`Shop name input changed to: ${e.target.value}`);
+                  setShopName(e.target.value);
+                }}
+                placeholder="Enter shop name"
+                required
+              />
+            </div>
+            {error && <p className="text-red-500 text-sm mb-4">Error: {error.message}</p>}
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Adding...' : 'Add Shop'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
+

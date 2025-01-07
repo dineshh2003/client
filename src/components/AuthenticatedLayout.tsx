@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { Box } from "@mui/material";
 import { Appbar } from "@/components/Appbar";
 import FixedSideBar from "@/components/SideBar";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
@@ -15,9 +15,9 @@ interface AuthenticatedLayoutProps {
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const { theme } = useTheme();
   const [view, setView] = useState<'home' | 'warehouse' | 'AddWarehouse'>('home');
   
-  // List of authenticated routes where sidebar and navbar should be shown
   const authenticatedRoutes = [
     '/dashboard', 
     '/storeorders', 
@@ -35,51 +35,57 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     '/viewstore'
   ];
 
-  // Check if current route is an authenticated route
   const isAuthenticatedRoute = authenticatedRoutes.some(route => 
     pathname.startsWith(route)
   );
 
-  // If not an authenticated route or no session, render children normally
   if (!session || !isAuthenticatedRoute) {
     return <>{children}</>;
   }
 
-  // Render layout for authenticated routes
   return (
-    <div className="flex h-screen bg-slate-800 overflow-hidden">
+    <div className="flex h-screen  overflow-hidden">
       {/* Sidebar */}
-      <FixedSideBar />
+      <div className="h-screen flex-shrink-0">
+        <FixedSideBar />
+      </div>
 
-      {/* Main Content Area with Fixed Appbar */}
-      <div className="flex-grow flex flex-col overflow-hidden relative">
+      {/* Main Content Area */}
+      <div className="flex-grow flex flex-col min-h-screen overflow-hidden">
         {/* Fixed Appbar */}
-        <div className="fixed top-0 left-0 right-0 z-50">
+        <div className="sticky top-0 z-50 shadow-md">
           <Appbar setView={setView} />
         </div>
 
         {/* Scrollable Content Area */}
         <div 
-          className="flex-grow overflow-y-auto pt-16 p-4"
+          // className="flex-grow overflow-y-auto p-6"
+           className={cn(
+                          "transition-all duration-300 flex-grow overflow-y-auto p-6",
+                          theme === "dark"
+                            ? "bg-[#1e293b] text-gray-100"
+                            : "bg-gray-200 text-gray-900",
+                        )}
           style={{
-            filter: view === 'warehouse' ? "blur(8px)" : "none"
+            filter: view === 'warehouse' ? "blur(8px)" : "none",
+            // backgroundColor: '#1e293b'
           }}
         >
           {children}
         </div>
       </div>
 
-      {/* Warehouse View (if applicable) */}
+      {/* Warehouse View Overlay */}
       <AnimatePresence>
         {view === 'warehouse' && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 bottom-0 w-[80vw] bg-[#292b35] z-10 p-4 border-l border-[#42C195]"
+            className="fixed top-0 right-0 bottom-0 w-[80vw] bg-[#1e293b] z-50 p-6 border-l border-[#42C195] shadow-xl"
           >
-            {/* Warehouse Component Placeholder */}
+            {/* Warehouse content goes here */}
           </motion.div>
         )}
       </AnimatePresence>
@@ -88,3 +94,4 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 };
 
 export default AuthenticatedLayout;
+

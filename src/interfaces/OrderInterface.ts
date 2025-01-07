@@ -1,40 +1,23 @@
 export interface FirestoreOrder {
-    ID: string;
-    Name: string;
-    Email?: string;
-    CreatedAt: string;
-    UpdatedAt?: string;
-    CancelledAt?: string;
-    ClosedAt?: string;
-    ProcessedAt: string;
-    Customer?: FirestoreCustomer;
-    BillingAddress?: FirestoreAddress;
-    ShippingAddress?: FirestoreAddress;
-    Currency: string;
-    TotalPrice: string;
-    SubtotalPrice: string;
-    TotalDiscounts: string;
-    TotalLineItemsPrice: string;
-    TaxesIncluded: boolean;
-    TotalTax: string;
-    TaxLines: FirestoreTaxLine[];
-    TotalWeight: number;
-    FinancialStatus: string;
-    Fulfillments?: any;
-    FulfillmentStatus?: string;
-    Token: string;
-    LineItems: FirestoreLineItem[];
-    ShippingLines?: any;
-    Transactions?: any;
-    AppID: number;
-    Tags?: string;
-    AWB?: string;
-    Dimensions: {
-      Length: number;
-      Width: number;
-      Height: number;
-    };
-  }
+  ID: string
+  Name: string
+  CreatedAt: string
+  UpdatedAt: string
+  CancelledAt: string | null
+  ClosedAt: string | null
+  ProcessedAt: string
+  Currency: string
+  TotalPrice: number | Float64Array
+  SubtotalPrice: number
+  TotalDiscounts: number
+  TotalTax: number
+  TaxesIncluded: boolean
+  FinancialStatus: string
+  FulfillmentStatus: string
+  OrderNumber: number
+  ShopName: string
+  AccountId: string
+}
   
   export interface FirestoreLineItem {
     id: string;

@@ -1,5 +1,12 @@
+"use client"
+
 import { ArrowLeft, Search } from 'lucide-react'
 import Image from "next/image"
+import { useTheme } from 'next-themes'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { motion } from "framer-motion"
 
 interface Channel {
   name: string
@@ -44,52 +51,66 @@ const channels: Channel[] = [
 ]
 
 export default function ViewChannelIntegration() {
+  const { theme } = useTheme()
+
   return (
-    <div className="min-h-screen bg-zinc-900 text-white p-8">
+    <div className={`min-h-screen p-8 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-8">Channel Integration</h1>
+        <h1 className="text-3xl font-bold mb-8">Channel Integration</h1>
         
-        <div className="bg-zinc-800 rounded-lg p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <button className="p-2 hover:bg-zinc-700 rounded-lg transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <p className="text-zinc-400">Integrate multiple channels to sync your orders.</p>
-          </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <p className="text-gray-500 dark:text-gray-400">Integrate multiple channels to sync your orders.</p>
+            </div>
 
-          <div className="relative mb-8">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search channel..."
-              className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg py-2 pl-10 pr-4 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+            <div className="relative mb-8">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Search channel..."
+                className="pl-10"
+              />
+            </div>
 
-          <h2 className="text-xl font-semibold mb-6">Available Channels</h2>
+            <h2 className="text-2xl font-semibold mb-6">Available Channels</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {channels.map((channel) => (
-              <div
-                key={channel.name}
-                className="relative group bg-zinc-700/30 hover:bg-zinc-700/50 rounded-lg p-8 transition-all duration-200 flex items-center justify-center"
-              >
-                <Image
-                  src={channel.logo}
-                  alt={channel.name}
-                  width={150}
-                  height={40}
-                  className="max-w-[150px] h-auto"
-                />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-lg">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full transition-colors">
-                    Integrate
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ staggerChildren: 0.1 }}
+            >
+              {channels.map((channel) => (
+                <motion.div
+                  key={channel.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <Card className="group relative overflow-hidden">
+                    <CardContent className="p-8 flex items-center justify-center">
+                      <Image
+                        src={channel.logo}
+                        alt={channel.name}
+                        width={150}
+                        height={40}
+                        className="max-w-[150px] h-auto"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
+                        <Button>
+                          Integrate
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
