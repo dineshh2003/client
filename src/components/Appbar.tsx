@@ -236,6 +236,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { SettingIcon } from '@/utils/Icons';
 import { cn } from "@/lib/utils";
 // import SettingApp from '@/utils/SettingButton';
+import RechargeWalletModal from './RechargeWalletModal';
+import { set } from 'date-fns';
+import SettingApp from './SettingApp';
 
 
 const GET_WALLET_DETAILS = gql`
@@ -285,7 +288,6 @@ const WalletButton = styled(StyledButton)(({ theme }) => ({
 
 
 
-
 interface AppbarProps {
   setView: (view: "home" | "warehouse" | "AddWarehouse") => void;
 }
@@ -293,6 +295,7 @@ interface AppbarProps {
 export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
   const { theme, setTheme } = useTheme();
   const [walletDetails, setWalletDetails] = useState<any>(null);
+    const [open, setOpen] = useState(false);
   const router = useRouter();
   const accountId = "1"; // Replace with dynamic account ID if available
 
@@ -330,6 +333,14 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
       console.error("Error fetching wallet details:", err);
     }
   };
+
+  
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    refreshWalletDetails();
+  };
+
 
   const navigateToCreateOrder = () => {
     router.push("/createorder");
@@ -374,7 +385,7 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <StyledButton
               startIcon={<AccountBalanceWalletIcon />}
-              onClick={() => toast.info("Recharge wallet functionality not implemented")}
+              onClick={() => setOpen(true)}
             >
               Recharge Wallet
             </StyledButton>
@@ -389,12 +400,10 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
           </motion.div>
         </Box>
           <Tooltip title="Settings">
-            <IconButton color="inherit" onClick={() => setView("warehouse")}>
-              <SettingIcon />
-            </IconButton>
+            <SettingApp setView={setView}/>
           </Tooltip>
           <Tooltip title="Help">
-            <IconButton color="inherit" onClick={() => toast.info("Help functionality not implemented")}>
+            <IconButton color="inherit" onClick={() => setOpen(true)}>
               <HelpOutlineIcon />
             </IconButton>
           </Tooltip>
@@ -413,6 +422,7 @@ export const Appbar: React.FC<AppbarProps> = ({ setView }) => {
           </Tooltip>
         </Box>
       </Toolbar>
+      <RechargeWalletModal open={open} handleClose={handleClose} />
     </div>
   );
 };

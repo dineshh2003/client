@@ -6,3 +6,13 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - NEXTAUTH_SECRET=J69F1Rbf9eJqOIOreESWUjJlnGF74sMM0Pr2zsE4ZrI
+      - NEXTAUTH_URL=http://localhost:3000
+      # Update this to use the service name from your GraphQL docker-compose
+      - NEXT_PUBLIC_GRAPHQL_ENDPOINT=http://graphql-service:8084/graphql
+    networks:
+      - logilo-network
+
+networks:
+  logilo-network:
+    external: true  # This tells Docker this network already exists
