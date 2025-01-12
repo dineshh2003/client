@@ -9,6 +9,7 @@ import OrderTableSkeleton from "../../utils/OrderTableSkeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
 import dynamic from 'next/dynamic';
+import { toast } from "sonner";
 
 const StoreOrderTable = dynamic(() => import("../../components/DataTable"), {
   ssr: false,
@@ -32,8 +33,14 @@ const OrdersPage = () => {
   const [shopName, setShopName] = useState<string | null>(null);
   const [code, setCode] = useState<string | null>(null);
   const [exchangeAccessToken] = useMutation(EXCHANGE_ACCESS_TOKEN_MUTATION);
-  const key = "orders_quickstart-5091d5ef.myshopify.com";
   const [view, setView] = useState<'home' | 'warehouse'>('home');
+
+  // Check for authenticated session
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+    }
+  }, [status, router]);
 
   useEffect(() => {
     console.log("Extracting query parameters...");
@@ -45,44 +52,65 @@ const OrdersPage = () => {
       setCode(extractedCode);
       setShopName(extractedShop);
     } else {
-      console.error("Missing code or shop in the URL parameters.");
+      console.log("No code or shop parameters found in URL");
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (code && shopName) {
-      console.log("Exchanging access token...");
-      const accountId = "accountId456"; // Replace with the appropriate account ID logic
+    const handleTokenExchange = async () => {
+      if (!code || !shopName || !session?.user?.id) {
+        return;
+      }
 
-      exchangeAccessToken({
-        variables: { shopName, code, accountId },
-      })
-        .then((response) => {
-          console.log("Access token exchanged successfully:", response.data);
-          // Redirect or perform further actions after successful token exchange
-        })
-        .catch((error) => {
-          console.error("Error exchanging access token:", error);
+      try {
+        console.log("Exchanging access token...");
+        const response = await exchangeAccessToken({
+          variables: { 
+            shopName, 
+            code, 
+            accountId: session.user.id 
+          },
         });
-    } else {
-      if (!code) console.error("Code is not available.");
-      if (!shopName) console.error("Shop name is not set.");
+
+        console.log("Access token exchanged successfully:", response.data);
+        toast.success("Shop connected successfully!");
+        
+        // Clear URL parameters after successful exchange
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+        
+      } catch (error) {
+        console.error("Error exchanging access token:", error);
+        toast.error("Failed to connect shop. Please try again.");
+      }
+    };
+
+    if (code && shopName && session?.user?.id) {
+      handleTokenExchange();
     }
-  }, [code, shopName, exchangeAccessToken]);
+  }, [code, shopName, session?.user?.id, exchangeAccessToken]);
 
   const handleSelectOrder = (order: FirestoreOrder) => {
     setViewOrder(order);
   };
 
+  // Don't render the main content until we have a session
+  if (status === 'loading') {
+    return <OrderTableSkeleton />;
+  }
+
+  if (!session?.user?.id) {
+    return null; // Or a more appropriate loading state
+  }
+
   return (
     <div className="p-4">
       <IndexBar />
       <TrackBar onSync={() => {
-        // Implement your sync logic here
-        // For example, refetching orders or updating data
+        // You can implement additional sync logic here if needed
+        // The main sync functionality is now handled in the TrackBar component
       }} />
       <StoreOrderTable
-        accountId="accountId456"
         onSelectOrder={handleSelectOrder}
       />
     </div>
@@ -90,4 +118,3 @@ const OrdersPage = () => {
 };
 
 export default OrdersPage;
-

@@ -5,18 +5,69 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { RefreshCw } from 'lucide-react'
 import { useTheme } from "next-themes"
+import { useSession } from "next-auth/react"
+import { useMutation } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { toast } from "sonner"
+
+const SYNC_ORDERS = gql`
+  mutation SyncOrders($accountId: String!) {
+    syncOrders(accountId: $accountId) {
+      overallSuccess
+      message
+      shopResults {
+        shopName
+        status {
+          success
+          errorMessage
+          ordersCount
+        }
+      }
+    }
+  }
+`;
 
 interface TrackBarProps {
-  onSync: () => void;
+  onSync?: () => void;  // Made optional since we're handling sync internally now
 }
 
 const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const { theme } = useTheme();
+  const { data: session } = useSession();
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  const handleRefresh = () => {
-    onSync();
-    setLastSync(new Date());
+  const [syncOrders] = useMutation(SYNC_ORDERS, {
+    onCompleted: (data) => {
+      setIsSyncing(false);
+      if (data.syncOrders.overallSuccess) {
+        toast.success(data.syncOrders.message || "Sync completed successfully");
+        // Update last sync time
+        setLastSync(new Date());
+        // Call the optional onSync callback if provided
+        if (onSync) onSync();
+      } else {
+        toast.error(data.syncOrders.message || "Sync failed");
+      }
+    },
+    onError: (error) => {
+      setIsSyncing(false);
+      toast.error(error.message || "Failed to sync orders");
+    }
+  });
+
+  const handleRefresh = async () => {
+    if (!session?.user?.id) {
+      toast.error("Please sign in to sync orders");
+      return;
+    }
+
+    setIsSyncing(true);
+    await syncOrders({
+      variables: {
+        accountId: session.user.id
+      }
+    });
   };
 
   const formatTime = (date: Date) => {
@@ -57,9 +108,10 @@ const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
               variant="ghost"
               size="icon"
               onClick={handleRefresh}
+              disabled={isSyncing}
               className={`${theme === 'dark' ? 'text-gray-300 hover:text-[#42C195] hover:bg-gray-700' : 'text-gray-600 hover:text-[#2C7A7B] hover:bg-gray-100'}`}
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
             </Button>
           </div>
         </div>
@@ -70,4 +122,3 @@ const TrackBar: React.FC<TrackBarProps> = ({ onSync }) => {
 };
 
 export default TrackBar;
-
