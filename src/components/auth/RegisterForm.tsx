@@ -180,7 +180,7 @@ export default function RegisterForm() {
               {/* Sign In Link */}
               <p className="text-center text-sm text-gray-600 mt-6">
                 Already have an account?{' '}
-                <a href="/signin" className="text-purple-600 hover:text-purple-800 font-semibold transition">
+                <a href="/login" className="text-purple-600 hover:text-purple-800 font-semibold transition">
                   Sign in
                 </a>
               </p>
